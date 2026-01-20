@@ -169,17 +169,20 @@ router.get('/users', async (req: AuthRequest, res: Response) => {
 
     const users = db.prepare(query).all(...params) as any[];
 
-    res.json(users.map(u => ({
-      id: u.id,
-      email: u.email,
-      firstName: u.first_name,
-      lastName: u.last_name,
-      company: u.company,
-      role: u.role,
-      status: u.status,
-      referralCode: u.referral_code,
-      createdAt: u.created_at
-    })));
+    res.json({
+      users: users.map(u => ({
+        id: u.id,
+        email: u.email,
+        firstName: u.first_name,
+        lastName: u.last_name,
+        company: u.company,
+        role: u.role,
+        status: u.status,
+        referralCode: u.referral_code,
+        managerId: u.manager_id,
+        createdAt: u.created_at
+      }))
+    });
   } catch (error) {
     console.error('Get users error:', error);
     res.status(500).json({ error: 'Failed to get users' });
@@ -203,6 +206,102 @@ router.put('/users/:id/status', async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Update user status error:', error);
     res.status(500).json({ error: 'Failed to update user status' });
+  }
+});
+
+// Assign manager to affiliate
+router.put('/users/:id/manager', async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { managerId } = req.body;
+
+    db.prepare('UPDATE users SET manager_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+      .run(managerId || null, id);
+
+    res.json({ message: 'Manager assigned successfully' });
+  } catch (error) {
+    console.error('Assign manager error:', error);
+    res.status(500).json({ error: 'Failed to assign manager' });
+  }
+});
+
+// Get all managers
+router.get('/managers', async (req: AuthRequest, res: Response) => {
+  try {
+    const managers = db.prepare(`
+      SELECT u.*,
+             (SELECT COUNT(*) FROM users WHERE manager_id = u.id) as affiliate_count
+      FROM users u
+      WHERE u.role = 'manager'
+      ORDER BY u.created_at DESC
+    `).all() as any[];
+
+    res.json({
+      managers: managers.map(m => ({
+        id: m.id,
+        email: m.email,
+        firstName: m.first_name,
+        lastName: m.last_name,
+        company: m.company,
+        phone: m.phone,
+        skype: m.skype,
+        telegram: m.telegram,
+        status: m.status,
+        createdAt: m.created_at,
+        affiliateCount: m.affiliate_count
+      }))
+    });
+  } catch (error) {
+    console.error('Get managers error:', error);
+    res.status(500).json({ error: 'Failed to get managers' });
+  }
+});
+
+// Create manager
+router.post('/managers', async (req: AuthRequest, res: Response) => {
+  try {
+    const { email, password, firstName, lastName, company, phone, skype, telegram } = req.body;
+
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({ error: 'Email, password, first name, and last name are required' });
+    }
+
+    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    if (existing) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const id = uuidv4();
+    const referralCode = 'MGR' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    db.prepare(`
+      INSERT INTO users (id, email, password, first_name, last_name, company, phone, skype, telegram, role, status, referral_code)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'manager', 'active', ?)
+    `).run(id, email, hashedPassword, firstName, lastName, company || null, phone || null, skype || null, telegram || null, referralCode);
+
+    res.json({ id, message: 'Manager created successfully' });
+  } catch (error) {
+    console.error('Create manager error:', error);
+    res.status(500).json({ error: 'Failed to create manager' });
+  }
+});
+
+// Delete manager
+router.delete('/managers/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Unassign any affiliates from this manager
+    db.prepare('UPDATE users SET manager_id = NULL WHERE manager_id = ?').run(id);
+
+    // Delete the manager
+    db.prepare('DELETE FROM users WHERE id = ? AND role = "manager"').run(id);
+
+    res.json({ message: 'Manager deleted successfully' });
+  } catch (error) {
+    console.error('Delete manager error:', error);
+    res.status(500).json({ error: 'Failed to delete manager' });
   }
 });
 

@@ -8,7 +8,7 @@ const router = Router();
 // Get all active offers (for affiliates to browse)
 router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { category, search, page = 1, limit = 20 } = req.query;
+    const { category, vertical, search, page = 1, limit = 20 } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
     let query = `
@@ -25,12 +25,17 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
       params.push(category);
     }
 
+    if (vertical && vertical !== 'all') {
+      query += ' AND o.vertical = ?';
+      params.push(vertical);
+    }
+
     if (search) {
       query += ' AND (o.name LIKE ? OR o.description LIKE ?)';
       params.push(`%${search}%`, `%${search}%`);
     }
 
-    query += ' ORDER BY o.created_at DESC LIMIT ? OFFSET ?';
+    query += ' ORDER BY o.is_featured DESC, o.is_top DESC, o.created_at DESC LIMIT ? OFFSET ?';
     params.push(Number(limit), offset);
 
     const offers = db.prepare(query).all(...params) as any[];
@@ -42,11 +47,23 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
       countQuery += ' AND category = ?';
       countParams.push(category);
     }
+    if (vertical && vertical !== 'all') {
+      countQuery += ' AND vertical = ?';
+      countParams.push(vertical);
+    }
     if (search) {
       countQuery += ' AND (name LIKE ? OR description LIKE ?)';
       countParams.push(`%${search}%`, `%${search}%`);
     }
     const total = (db.prepare(countQuery).get(...countParams) as any).total;
+
+    // Get vertical counts for sidebar
+    const verticalCounts = db.prepare(`
+      SELECT vertical, COUNT(*) as count
+      FROM offers
+      WHERE status = 'active'
+      GROUP BY vertical
+    `).all() as any[];
 
     res.json({
       offers: offers.map(o => ({
@@ -54,17 +71,25 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
         name: o.name,
         description: o.description,
         previewUrl: o.preview_url,
+        thumbnailUrl: o.thumbnail_url,
         category: o.category,
+        vertical: o.vertical,
         payoutType: o.payout_type,
         payoutAmount: o.payout_amount,
         countries: o.countries ? JSON.parse(o.countries) : null,
         allowedTraffic: o.allowed_traffic ? JSON.parse(o.allowed_traffic) : null,
         restrictedTraffic: o.restricted_traffic ? JSON.parse(o.restricted_traffic) : null,
         requiresApproval: o.requires_approval === 1,
+        isFeatured: o.is_featured === 1,
+        isTop: o.is_top === 1,
         myStatus: o.my_status || 'not_applied',
         advertiserName: o.advertiser_name,
         createdAt: o.created_at
       })),
+      verticalCounts: verticalCounts.reduce((acc, v) => {
+        acc[v.vertical] = v.count;
+        return acc;
+      }, {} as Record<string, number>),
       pagination: {
         page: Number(page),
         limit: Number(limit),

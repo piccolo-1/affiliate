@@ -16,6 +16,7 @@ import AdminOffers from './pages/admin/AdminOffers';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminConversions from './pages/admin/AdminConversions';
 import AdminPayouts from './pages/admin/AdminPayouts';
+import AdminManagers from './pages/admin/AdminManagers';
 
 function ProtectedRoute({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) {
   const { user, loading } = useAuth();
@@ -74,6 +75,7 @@ function App() {
         <Route index element={<AdminDashboard />} />
         <Route path="offers" element={<AdminOffers />} />
         <Route path="users" element={<AdminUsers />} />
+        <Route path="managers" element={<AdminManagers />} />
         <Route path="conversions" element={<AdminConversions />} />
         <Route path="payouts" element={<AdminPayouts />} />
       </Route>
