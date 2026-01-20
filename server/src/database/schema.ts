@@ -18,7 +18,7 @@ db.pragma('foreign_keys = ON');
 
 // Initialize database schema
 export function initializeDatabase() {
-  // Users table - supports affiliates, advertisers, and admins
+  // Users table - supports affiliates, advertisers, managers, and admins
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -27,13 +27,18 @@ export function initializeDatabase() {
       first_name TEXT NOT NULL,
       last_name TEXT NOT NULL,
       company TEXT,
-      role TEXT NOT NULL DEFAULT 'affiliate' CHECK (role IN ('affiliate', 'advertiser', 'admin')),
+      role TEXT NOT NULL DEFAULT 'affiliate' CHECK (role IN ('affiliate', 'advertiser', 'manager', 'admin')),
       status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'suspended')),
       referral_code TEXT UNIQUE,
       referred_by TEXT REFERENCES users(id),
+      manager_id TEXT REFERENCES users(id),
       payout_method TEXT DEFAULT 'paypal',
       payout_details TEXT,
       minimum_payout REAL DEFAULT 50.00,
+      skype TEXT,
+      telegram TEXT,
+      phone TEXT,
+      notes TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -47,9 +52,11 @@ export function initializeDatabase() {
       description TEXT,
       url TEXT NOT NULL,
       preview_url TEXT,
+      thumbnail_url TEXT,
       advertiser_id TEXT REFERENCES users(id),
       category TEXT,
-      payout_type TEXT NOT NULL DEFAULT 'cpa' CHECK (payout_type IN ('cpa', 'cpl', 'cpc', 'cpm', 'revshare')),
+      vertical TEXT DEFAULT 'other' CHECK (vertical IN ('nutra', 'gaming', 'finance', 'dating', 'ecommerce', 'crypto', 'sweepstakes', 'leadgen', 'software', 'other')),
+      payout_type TEXT NOT NULL DEFAULT 'cpa' CHECK (payout_type IN ('cpa', 'cpl', 'cpc', 'cpm', 'cpi', 'revshare')),
       payout_amount REAL NOT NULL DEFAULT 0,
       revenue_amount REAL NOT NULL DEFAULT 0,
       conversion_cap INTEGER,
@@ -61,6 +68,8 @@ export function initializeDatabase() {
       status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'expired', 'pending')),
       requires_approval INTEGER DEFAULT 0,
       tracking_domain TEXT,
+      is_featured INTEGER DEFAULT 0,
+      is_top INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
