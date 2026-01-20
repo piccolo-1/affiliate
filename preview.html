@@ -3,361 +3,805 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Affiliate Network - Preview</title>
+  <title>AffiliateNet - Premium Network</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             primary: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              200: '#c7d2fe',
-              300: '#a5b4fc',
-              400: '#818cf8',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              800: '#3730a3',
-              900: '#312e81',
+              50: '#f0f4ff',
+              100: '#e0e9ff',
+              200: '#c7d6fe',
+              300: '#a5bdfc',
+              400: '#8199f8',
+              500: '#6172f3',
+              600: '#4f52e8',
+              700: '#4240cd',
+              800: '#3736a5',
+              900: '#323382',
+            },
+            korean: {
+              pink: '#FFB5C5',
+              lavender: '#E8D5FF',
+              mint: '#B5F5E8',
+              peach: '#FFE5D9',
+              sky: '#D5EEFF',
+              cream: '#FFF8F0',
             }
+          },
+          fontFamily: {
+            sans: ['Outfit', 'Noto Sans KR', 'sans-serif'],
           }
         }
       }
     }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
     * {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Outfit', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+    body {
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 50%, #fff8f5 100%);
+      min-height: 100vh;
+    }
+
+    /* Floating Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+
+    @keyframes floatDelayed {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.02); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes bounce-soft {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(97, 114, 243, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(97, 114, 243, 0.5); }
+    }
+
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .float { animation: float 3s ease-in-out infinite; }
+    .float-slow { animation: floatSlow 4s ease-in-out infinite; }
+    .float-delayed { animation: floatDelayed 3.5s ease-in-out infinite 0.5s; }
+    .pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+    .bounce-soft { animation: bounce-soft 2s ease-in-out infinite; }
+    .glow { animation: glow 2s ease-in-out infinite; }
+    .rotate-slow { animation: rotate-slow 20s linear infinite; }
+
+    .animate-slide-in {
+      animation: slide-in 0.5s ease-out forwards;
+    }
+
+    .animate-fade-up {
+      animation: fade-up 0.6s ease-out forwards;
+    }
+
+    /* Glassmorphism */
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .glass-dark {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 32px rgba(100, 100, 150, 0.1);
+    }
+
+    /* Sidebar */
     .sidebar {
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      position: relative;
+      overflow: hidden;
     }
 
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 60%);
+      animation: rotate-slow 30s linear infinite;
+    }
+
+    .sidebar-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Navigation Items */
     .nav-item {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
+      padding: 0.875rem 1rem;
+      border-radius: 0.75rem;
       color: #94a3b8;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .nav-item:hover::before {
+      left: 100%;
     }
 
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.08);
       color: #e2e8f0;
+      transform: translateX(4px);
     }
 
     .nav-item-active {
-      background: rgba(99, 102, 241, 0.2);
-      color: #818cf8;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.2) 100%);
+      color: #a5b4fc;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
     }
 
+    /* Vertical Tabs */
     .vertical-tab {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
+      padding: 0.875rem 1rem;
+      border-radius: 0.75rem;
       color: #64748b;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
+      position: relative;
     }
 
     .vertical-tab:hover {
-      background: #f1f5f9;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
       color: #334155;
+      transform: translateX(4px);
     }
 
     .vertical-tab-active {
-      background: #eef2ff;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
       color: #4f46e5;
       font-weight: 500;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.15);
     }
 
+    /* Cards */
     .card {
-      background: white;
-      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 1.25rem;
       padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 24px rgba(100, 100, 150, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(100, 100, 150, 0.15);
+    }
+
+    /* Stat Cards */
+    .stat-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, currentColor 0%, transparent 70%);
+      opacity: 0.05;
+      transform: translate(30%, -30%);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(100, 100, 150, 0.15);
+    }
+
+    /* Offer Cards */
+    .offer-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .offer-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(100, 100, 150, 0.2);
+    }
+
+    .offer-card:hover .offer-image {
+      transform: scale(1.1);
+    }
+
+    .offer-image {
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Badges */
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 0.25rem 0.625rem;
+      padding: 0.375rem 0.75rem;
       border-radius: 9999px;
       font-size: 0.75rem;
       font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .badge:hover {
+      transform: scale(1.05);
     }
 
     .badge-success {
-      background: #dcfce7;
-      color: #166534;
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      color: #065f46;
     }
 
     .badge-warning {
-      background: #fef3c7;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
       color: #92400e;
     }
 
     .badge-info {
-      background: #dbeafe;
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
       color: #1e40af;
     }
 
-    .avatar {
-      width: 2.5rem;
-      height: 2.5rem;
+    .badge-pink {
+      background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+      color: #9d174d;
+    }
+
+    .badge-purple {
+      background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+      color: #5b21b6;
+    }
+
+    /* Featured Badge */
+    .featured-badge {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: white;
+      padding: 0.375rem 0.75rem;
       border-radius: 9999px;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+      animation: bounce-soft 2s ease-in-out infinite;
+    }
+
+    /* Avatar */
+    .avatar {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: 600;
       font-size: 0.875rem;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      transition: all 0.3s ease;
     }
 
+    .avatar:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Buttons */
     .btn-primary {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
       color: white;
-      padding: 0.625rem 1.25rem;
-      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.875rem;
       font-weight: 500;
       font-size: 0.875rem;
       border: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
     }
 
     .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
     }
 
-    .stat-card {
-      background: white;
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-      border: 1px solid #e2e8f0;
-    }
-
-    .offer-card {
-      background: white;
-      border-radius: 0.75rem;
-      border: 1px solid #e2e8f0;
-      overflow: hidden;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-
-    .offer-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .featured-badge {
-      position: absolute;
-      top: 0.75rem;
-      right: 0.75rem;
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.375rem;
-      font-size: 0.625rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .tab-nav {
-      display: flex;
-      gap: 0.25rem;
-      background: #f1f5f9;
-      padding: 0.25rem;
-      border-radius: 0.5rem;
-    }
-
-    .tab-btn {
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.8);
+      color: #4f46e5;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.875rem;
       font-weight: 500;
-      color: #64748b;
+      font-size: 0.875rem;
+      border: 1px solid rgba(79, 70, 229, 0.2);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
     }
 
-    .tab-btn-active {
-      background: white;
-      color: #1e293b;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    .btn-secondary:hover {
+      background: #eef2ff;
+      transform: translateY(-2px);
     }
 
+    /* Search Input */
     .search-input {
       background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.5rem;
-      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 0.875rem;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
       color: white;
       font-size: 0.875rem;
       width: 100%;
+      transition: all 0.3s ease;
     }
 
     .search-input::placeholder {
       color: #64748b;
     }
 
-    .chart-placeholder {
+    .search-input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Chart */
+    .chart-container {
       background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      border-radius: 0.5rem;
-      height: 200px;
+      border-radius: 1rem;
+      height: 220px;
       display: flex;
       align-items: flex-end;
-      padding: 1rem;
-      gap: 0.5rem;
+      padding: 1.5rem;
+      gap: 0.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        linear-gradient(90deg, transparent 49.5%, rgba(99, 102, 241, 0.1) 49.5%, rgba(99, 102, 241, 0.1) 50.5%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, rgba(99, 102, 241, 0.1) 49.5%, rgba(99, 102, 241, 0.1) 50.5%, transparent 50.5%);
+      background-size: 40px 40px;
     }
 
     .chart-bar {
       flex: 1;
-      background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
-      border-radius: 0.25rem 0.25rem 0 0;
+      background: linear-gradient(180deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%);
+      border-radius: 0.5rem 0.5rem 0 0;
       min-height: 20px;
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
-    .scrollable {
-      max-height: 600px;
-      overflow-y: auto;
+    .chart-bar:hover {
+      filter: brightness(1.1);
+      transform: scaleY(1.05);
+      transform-origin: bottom;
     }
 
+    .chart-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 0.25rem;
+      background: rgba(241, 245, 249, 0.8);
+      padding: 0.375rem;
+      border-radius: 0.875rem;
+    }
+
+    .tab-btn {
+      padding: 0.625rem 1.25rem;
+      border-radius: 0.625rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+      color: #4f46e5;
+    }
+
+    .tab-btn-active {
+      background: white;
+      color: #1e293b;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Floating Decorations */
+    .floating-shape {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, #FFB5C5 0%, #FFE5D9 100%);
+      top: 10%;
+      right: 5%;
+      animation: floatSlow 8s ease-in-out infinite;
+    }
+
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #E8D5FF 0%, #D5EEFF 100%);
+      bottom: 20%;
+      left: 10%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .shape-3 {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #B5F5E8 0%, #D5EEFF 100%);
+      top: 40%;
+      right: 15%;
+      animation: floatDelayed 7s ease-in-out infinite;
+    }
+
+    /* Scrollbar */
     ::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
+      height: 8px;
     }
 
     ::-webkit-scrollbar-track {
       background: #f1f5f9;
+      border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
+      background: linear-gradient(180deg, #c7d2fe 0%, #a5b4fc 100%);
+      border-radius: 4px;
     }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #a5b4fc 0%, #818cf8 100%);
+    }
+
+    /* Notification Dot */
+    .notification-dot {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+      border-radius: 50%;
+      border: 2px solid white;
+      animation: pulse-soft 2s ease-in-out infinite;
+    }
+
+    /* Manager Card */
+    .manager-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,255,0.9) 100%);
+      backdrop-filter: blur(10px);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .manager-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(100, 100, 150, 0.15);
+    }
+
+    /* Table */
+    .table-row {
+      transition: all 0.3s ease;
+    }
+
+    .table-row:hover {
+      background: rgba(99, 102, 241, 0.05);
+      transform: scale(1.01);
+    }
+
+    /* Icon Buttons */
+    .icon-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Progress Ring */
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.5s ease;
+    }
+
+    /* Stagger Animation Delays */
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
+    .stagger-5 { animation-delay: 0.5s; }
+    .stagger-6 { animation-delay: 0.6s; }
   </style>
 </head>
-<body class="bg-gray-50">
-  <div class="flex h-screen">
+<body class="overflow-x-hidden">
+  <!-- Floating Background Shapes -->
+  <div class="floating-shape shape-1"></div>
+  <div class="floating-shape shape-2"></div>
+  <div class="floating-shape shape-3"></div>
+
+  <div class="flex h-screen relative z-10">
     <!-- Sidebar -->
-    <aside class="sidebar w-64 flex flex-col">
-      <!-- Logo -->
-      <div class="p-6">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+    <aside class="sidebar w-72 flex flex-col shadow-2xl">
+      <div class="sidebar-content flex flex-col h-full">
+        <!-- Logo -->
+        <div class="p-6">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-400 via-purple-500 to-pink-500 flex items-center justify-center float-slow shadow-lg">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-white font-bold text-xl tracking-tight">AffiliateNet</h1>
+              <p class="text-indigo-300 text-xs font-medium">Premium Network</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="px-5 mb-6">
+          <div class="relative">
+            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
+            <input type="text" placeholder="Search anything..." class="search-input">
           </div>
-          <div>
-            <h1 class="text-white font-bold text-lg">AffiliateNet</h1>
-            <p class="text-slate-400 text-xs">Performance Network</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Search -->
-      <div class="px-4 mb-4">
-        <div class="relative">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input type="text" placeholder="Search..." class="search-input">
-        </div>
-      </div>
-
-      <!-- Navigation -->
-      <nav class="flex-1 px-4 space-y-1">
-        <div class="nav-item nav-item-active">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-          </svg>
-          <span>Dashboard</span>
-        </div>
-        <div class="nav-item">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-          </svg>
-          <span>Offers</span>
-          <span class="ml-auto bg-indigo-500/20 text-indigo-300 text-xs px-2 py-0.5 rounded-full">24</span>
-        </div>
-        <div class="nav-item">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-          </svg>
-          <span>Tracking Links</span>
-        </div>
-        <div class="nav-item">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
-          <span>Reports</span>
-        </div>
-        <div class="nav-item">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span>Conversions</span>
-        </div>
-        <div class="nav-item">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
-          </svg>
-          <span>Postbacks</span>
-        </div>
-        <div class="nav-item">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span>Payouts</span>
         </div>
 
-        <div class="pt-6 mt-6 border-t border-slate-700">
-          <p class="px-3 text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">Admin</p>
-          <div class="nav-item">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-            <span>Affiliates</span>
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto">
+          <div class="nav-item nav-item-active animate-slide-in stagger-1">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </div>
+            <span class="font-medium">Dashboard</span>
           </div>
-          <div class="nav-item">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-            <span>Managers</span>
-          </div>
-        </div>
-      </nav>
 
-      <!-- User -->
-      <div class="p-4 border-t border-slate-700">
-        <div class="flex items-center gap-3">
-          <div class="avatar">JD</div>
-          <div class="flex-1 min-w-0">
-            <p class="text-white text-sm font-medium truncate">John Doe</p>
-            <p class="text-slate-400 text-xs truncate">admin@affiliate.com</p>
+          <div class="nav-item animate-slide-in stagger-2">
+            <div class="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+              </svg>
+            </div>
+            <span>Offers</span>
+            <span class="ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs px-2.5 py-1 rounded-full font-medium shadow-lg">24</span>
           </div>
-          <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
+
+          <div class="nav-item animate-slide-in stagger-3">
+            <div class="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+              </svg>
+            </div>
+            <span>Tracking Links</span>
+          </div>
+
+          <div class="nav-item animate-slide-in stagger-4">
+            <div class="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <span>Reports</span>
+          </div>
+
+          <div class="nav-item animate-slide-in stagger-5">
+            <div class="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <span>Conversions</span>
+            <span class="ml-auto w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
+          </div>
+
+          <div class="nav-item animate-slide-in stagger-6">
+            <div class="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <span>Payouts</span>
+          </div>
+
+          <div class="pt-6 mt-6 border-t border-slate-700/50">
+            <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Admin Panel</p>
+
+            <div class="nav-item">
+              <div class="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <span>Affiliates</span>
+            </div>
+
+            <div class="nav-item">
+              <div class="w-9 h-9 rounded-xl bg-slate-700/50 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <span>Managers</span>
+            </div>
+          </div>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 m-4 rounded-2xl bg-gradient-to-r from-slate-800/50 to-slate-700/30 border border-slate-600/30">
+          <div class="flex items-center gap-3">
+            <div class="avatar float">JD</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-white text-sm font-semibold truncate">John Doe</p>
+              <p class="text-indigo-300 text-xs truncate">Premium Member</p>
+            </div>
+            <div class="icon-btn bg-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-600/50">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
@@ -365,21 +809,21 @@
     <!-- Main Content -->
     <main class="flex-1 overflow-auto">
       <!-- Header -->
-      <header class="bg-white border-b border-gray-200 px-8 py-4">
+      <header class="glass sticky top-0 z-20 px-8 py-5 border-b border-white/20">
         <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p class="text-gray-500 text-sm">Welcome back! Here's your network overview.</p>
+          <div class="animate-fade-up">
+            <h1 class="text-2xl font-bold text-gray-900">Welcome back, John! &#x1F44B;</h1>
+            <p class="text-gray-500 text-sm mt-1">Here's what's happening with your network today.</p>
           </div>
           <div class="flex items-center gap-4">
-            <button class="relative p-2 text-gray-400 hover:text-gray-600">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="relative icon-btn bg-white/80 text-gray-500 hover:text-indigo-600 shadow-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
               </svg>
-              <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+              <span class="notification-dot"></span>
+            </div>
             <button class="btn-primary">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
               </svg>
               Create Link
@@ -392,100 +836,115 @@
       <div class="p-8">
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div class="stat-card">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Today's Clicks</span>
-              <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="stat-card animate-fade-up stagger-1 text-blue-600">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-gray-500 text-sm font-medium">Today's Clicks</span>
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center float">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
                 </svg>
               </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900">12,847</p>
-            <p class="text-sm text-green-600 flex items-center gap-1 mt-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-              </svg>
-              +12.5% from yesterday
-            </p>
+            <p class="text-4xl font-bold text-gray-900 mb-2">12,847</p>
+            <div class="flex items-center gap-2">
+              <span class="badge badge-success">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                +12.5%
+              </span>
+              <span class="text-gray-400 text-xs">vs yesterday</span>
+            </div>
           </div>
 
-          <div class="stat-card">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Conversions</span>
-              <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="stat-card animate-fade-up stagger-2 text-green-600">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-gray-500 text-sm font-medium">Conversions</span>
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center float-delayed">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900">284</p>
-            <p class="text-sm text-green-600 flex items-center gap-1 mt-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-              </svg>
-              +8.2% from yesterday
-            </p>
+            <p class="text-4xl font-bold text-gray-900 mb-2">284</p>
+            <div class="flex items-center gap-2">
+              <span class="badge badge-success">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                +8.2%
+              </span>
+              <span class="text-gray-400 text-xs">vs yesterday</span>
+            </div>
           </div>
 
-          <div class="stat-card">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Revenue</span>
-              <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="stat-card animate-fade-up stagger-3 text-purple-600">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-gray-500 text-sm font-medium">Revenue</span>
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center float">
+                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900">$8,492</p>
-            <p class="text-sm text-green-600 flex items-center gap-1 mt-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-              </svg>
-              +15.3% from yesterday
-            </p>
+            <p class="text-4xl font-bold text-gray-900 mb-2">$8,492</p>
+            <div class="flex items-center gap-2">
+              <span class="badge badge-success">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                +15.3%
+              </span>
+              <span class="text-gray-400 text-xs">vs yesterday</span>
+            </div>
           </div>
 
-          <div class="stat-card">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Conversion Rate</span>
-              <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="stat-card animate-fade-up stagger-4 text-amber-600">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-gray-500 text-sm font-medium">Conversion Rate</span>
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center float-delayed">
+                <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                 </svg>
               </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900">2.21%</p>
-            <p class="text-sm text-red-600 flex items-center gap-1 mt-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
-              </svg>
-              -0.3% from yesterday
-            </p>
+            <p class="text-4xl font-bold text-gray-900 mb-2">2.21%</p>
+            <div class="flex items-center gap-2">
+              <span class="badge badge-warning">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                </svg>
+                -0.3%
+              </span>
+              <span class="text-gray-400 text-xs">vs yesterday</span>
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <!-- Chart -->
-          <div class="lg:col-span-2 card">
+          <div class="lg:col-span-2 card animate-fade-up">
             <div class="flex items-center justify-between mb-6">
-              <h2 class="text-lg font-semibold text-gray-900">Performance Overview</h2>
+              <div>
+                <h2 class="text-xl font-bold text-gray-900">Performance Overview</h2>
+                <p class="text-gray-500 text-sm mt-1">Your network performance this week</p>
+              </div>
               <div class="tab-nav">
                 <div class="tab-btn tab-btn-active">7 Days</div>
                 <div class="tab-btn">30 Days</div>
                 <div class="tab-btn">90 Days</div>
               </div>
             </div>
-            <div class="chart-placeholder">
-              <div class="chart-bar" style="height: 60%"></div>
-              <div class="chart-bar" style="height: 80%"></div>
-              <div class="chart-bar" style="height: 45%"></div>
-              <div class="chart-bar" style="height: 90%"></div>
-              <div class="chart-bar" style="height: 70%"></div>
-              <div class="chart-bar" style="height: 85%"></div>
+            <div class="chart-container">
+              <div class="chart-bar stagger-1" style="height: 55%"></div>
+              <div class="chart-bar stagger-2" style="height: 75%"></div>
+              <div class="chart-bar stagger-3" style="height: 45%"></div>
+              <div class="chart-bar stagger-4" style="height: 85%"></div>
+              <div class="chart-bar stagger-5" style="height: 65%"></div>
+              <div class="chart-bar stagger-6" style="height: 90%"></div>
               <div class="chart-bar" style="height: 95%"></div>
             </div>
-            <div class="flex justify-between mt-4 text-xs text-gray-500">
+            <div class="flex justify-between mt-4 text-xs text-gray-400 font-medium">
               <span>Mon</span>
               <span>Tue</span>
               <span>Wed</span>
@@ -497,49 +956,52 @@
           </div>
 
           <!-- Top Offers -->
-          <div class="card">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Top Performing Offers</h2>
+          <div class="card animate-fade-up">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-xl font-bold text-gray-900">Top Offers</h2>
+              <button class="text-indigo-600 text-sm font-medium hover:text-indigo-700 transition-colors">View All</button>
+            </div>
             <div class="space-y-4">
-              <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-xl">
+              <div class="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 hover:shadow-md transition-all cursor-pointer float-delayed">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white text-lg font-bold shadow-lg">
                   N
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-gray-900 truncate">NutraBoost Pro</p>
-                  <p class="text-sm text-gray-500">Nutra - $45 CPA</p>
+                  <p class="font-semibold text-gray-900 truncate">NutraBoost Pro</p>
+                  <p class="text-sm text-gray-500">Nutra &bull; $45 CPA</p>
                 </div>
                 <span class="badge badge-success">+24%</span>
               </div>
 
-              <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xl">
+              <div class="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 hover:shadow-md transition-all cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-lg font-bold shadow-lg">
                   C
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-gray-900 truncate">CryptoTrade Elite</p>
-                  <p class="text-sm text-gray-500">Crypto - $120 CPA</p>
+                  <p class="font-semibold text-gray-900 truncate">CryptoTrade Elite</p>
+                  <p class="text-sm text-gray-500">Crypto &bull; $120 CPA</p>
                 </div>
                 <span class="badge badge-success">+18%</span>
               </div>
 
-              <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center text-white text-xl">
+              <div class="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-100 hover:shadow-md transition-all cursor-pointer float">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-lg font-bold shadow-lg">
                   D
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-gray-900 truncate">DateMatch Premium</p>
-                  <p class="text-sm text-gray-500">Dating - $35 CPA</p>
+                  <p class="font-semibold text-gray-900 truncate">DateMatch Premium</p>
+                  <p class="text-sm text-gray-500">Dating &bull; $35 CPA</p>
                 </div>
                 <span class="badge badge-success">+12%</span>
               </div>
 
-              <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-xl">
+              <div class="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-violet-50 border border-purple-100 hover:shadow-md transition-all cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center text-white text-lg font-bold shadow-lg">
                   G
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-gray-900 truncate">GoldenSlots Casino</p>
-                  <p class="text-sm text-gray-500">Gaming - $80 CPA</p>
+                  <p class="font-semibold text-gray-900 truncate">GoldenSlots Casino</p>
+                  <p class="text-sm text-gray-500">Gaming &bull; $80 CPA</p>
                 </div>
                 <span class="badge badge-warning">+5%</span>
               </div>
@@ -548,186 +1010,256 @@
         </div>
 
         <!-- Offers Section -->
-        <div class="mt-8">
+        <div class="mb-8">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-gray-900">Browse Offers</h2>
-            <button class="btn-primary">View All Offers</button>
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">Browse Offers</h2>
+              <p class="text-gray-500 text-sm mt-1">Find the perfect offers for your traffic</p>
+            </div>
+            <div class="flex gap-3">
+              <button class="btn-secondary">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                </svg>
+                Filters
+              </button>
+              <button class="btn-primary">View All Offers</button>
+            </div>
           </div>
 
           <div class="flex gap-6">
             <!-- Vertical Tabs -->
-            <div class="w-56 flex-shrink-0">
-              <div class="card p-2">
-                <div class="vertical-tab vertical-tab-active">
-                  <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
-                    All Offers
-                  </span>
-                  <span class="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full">24</span>
-                </div>
-                <div class="vertical-tab">
-                  <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                    </svg>
-                    Nutra
-                  </span>
-                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">8</span>
-                </div>
-                <div class="vertical-tab">
-                  <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Gaming
-                  </span>
-                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">5</span>
-                </div>
-                <div class="vertical-tab">
-                  <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                    </svg>
-                    Finance
-                  </span>
-                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">4</span>
-                </div>
-                <div class="vertical-tab">
-                  <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                    </svg>
-                    Dating
-                  </span>
-                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">3</span>
-                </div>
-                <div class="vertical-tab">
-                  <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                    </svg>
-                    Crypto
-                  </span>
-                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">2</span>
-                </div>
-                <div class="vertical-tab">
-                  <span class="flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                    E-Commerce
-                  </span>
-                  <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">2</span>
+            <div class="w-60 flex-shrink-0">
+              <div class="card p-3">
+                <div class="space-y-1">
+                  <div class="vertical-tab vertical-tab-active">
+                    <span class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                      </div>
+                      All Offers
+                    </span>
+                    <span class="text-xs bg-indigo-600 text-white px-2.5 py-1 rounded-full font-medium">24</span>
+                  </div>
+
+                  <div class="vertical-tab">
+                    <span class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                      </div>
+                      Nutra
+                    </span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">8</span>
+                  </div>
+
+                  <div class="vertical-tab">
+                    <span class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                      </div>
+                      Gaming
+                    </span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">5</span>
+                  </div>
+
+                  <div class="vertical-tab">
+                    <span class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                      </div>
+                      Finance
+                    </span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">4</span>
+                  </div>
+
+                  <div class="vertical-tab">
+                    <span class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                      </div>
+                      Dating
+                    </span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">3</span>
+                  </div>
+
+                  <div class="vertical-tab">
+                    <span class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                      </div>
+                      Crypto
+                    </span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">2</span>
+                  </div>
+
+                  <div class="vertical-tab">
+                    <span class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                      </div>
+                      E-Commerce
+                    </span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">2</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Offer Cards -->
             <div class="flex-1">
-              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 <!-- Offer Card 1 -->
-                <div class="offer-card relative">
+                <div class="offer-card relative animate-fade-up stagger-1">
                   <div class="featured-badge">Featured</div>
-                  <div class="h-32 bg-gradient-to-br from-green-400 to-green-600"></div>
-                  <div class="p-4">
-                    <div class="flex items-center gap-2 mb-2">
+                  <div class="h-36 bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 relative overflow-hidden">
+                    <div class="offer-image absolute inset-0 flex items-center justify-center">
+                      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center">
+                        <span class="text-4xl">&#x1F48A;</span>
+                      </div>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/20 to-transparent"></div>
+                  </div>
+                  <div class="p-5">
+                    <div class="flex items-center gap-2 mb-3">
                       <span class="badge badge-success">Nutra</span>
                       <span class="badge badge-info">CPA</span>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-1">NutraBoost Pro</h3>
-                    <p class="text-sm text-gray-500 mb-3 line-clamp-2">Premium weight loss supplement with high conversion rates</p>
+                    <h3 class="font-bold text-gray-900 mb-2">NutraBoost Pro</h3>
+                    <p class="text-sm text-gray-500 mb-4 line-clamp-2">Premium weight loss supplement with industry-leading conversion rates</p>
                     <div class="flex items-center justify-between">
-                      <span class="text-lg font-bold text-indigo-600">$45.00</span>
-                      <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Get Link</button>
+                      <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">$45.00</span>
+                      <button class="btn-primary text-sm py-2 px-4">Get Link</button>
                     </div>
                   </div>
                 </div>
 
                 <!-- Offer Card 2 -->
-                <div class="offer-card relative">
-                  <div class="featured-badge">Top</div>
-                  <div class="h-32 bg-gradient-to-br from-blue-400 to-blue-600"></div>
-                  <div class="p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="badge badge-info">Crypto</span>
+                <div class="offer-card relative animate-fade-up stagger-2">
+                  <div class="featured-badge" style="background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);">Top</div>
+                  <div class="h-36 bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-500 relative overflow-hidden">
+                    <div class="offer-image absolute inset-0 flex items-center justify-center">
+                      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center">
+                        <span class="text-4xl">&#x1F4B0;</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span class="badge badge-purple">Crypto</span>
                       <span class="badge badge-info">CPA</span>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-1">CryptoTrade Elite</h3>
-                    <p class="text-sm text-gray-500 mb-3 line-clamp-2">Leading crypto trading platform with excellent payouts</p>
+                    <h3 class="font-bold text-gray-900 mb-2">CryptoTrade Elite</h3>
+                    <p class="text-sm text-gray-500 mb-4 line-clamp-2">Leading crypto trading platform with excellent payouts</p>
                     <div class="flex items-center justify-between">
-                      <span class="text-lg font-bold text-indigo-600">$120.00</span>
-                      <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Get Link</button>
+                      <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">$120.00</span>
+                      <button class="btn-primary text-sm py-2 px-4">Get Link</button>
                     </div>
                   </div>
                 </div>
 
                 <!-- Offer Card 3 -->
-                <div class="offer-card">
-                  <div class="h-32 bg-gradient-to-br from-pink-400 to-pink-600"></div>
-                  <div class="p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="badge badge-warning">Dating</span>
+                <div class="offer-card animate-fade-up stagger-3">
+                  <div class="h-36 bg-gradient-to-br from-pink-400 via-rose-500 to-red-500 relative overflow-hidden">
+                    <div class="offer-image absolute inset-0 flex items-center justify-center">
+                      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center">
+                        <span class="text-4xl">&#x1F495;</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span class="badge badge-pink">Dating</span>
                       <span class="badge badge-info">CPA</span>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-1">DateMatch Premium</h3>
-                    <p class="text-sm text-gray-500 mb-3 line-clamp-2">High-quality dating platform with global reach</p>
+                    <h3 class="font-bold text-gray-900 mb-2">DateMatch Premium</h3>
+                    <p class="text-sm text-gray-500 mb-4 line-clamp-2">High-quality dating platform with global reach</p>
                     <div class="flex items-center justify-between">
-                      <span class="text-lg font-bold text-indigo-600">$35.00</span>
-                      <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Get Link</button>
+                      <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">$35.00</span>
+                      <button class="btn-primary text-sm py-2 px-4">Get Link</button>
                     </div>
                   </div>
                 </div>
 
                 <!-- Offer Card 4 -->
-                <div class="offer-card">
-                  <div class="h-32 bg-gradient-to-br from-purple-400 to-purple-600"></div>
-                  <div class="p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="badge badge-info">Gaming</span>
-                      <span class="badge badge-info">RevShare</span>
+                <div class="offer-card animate-fade-up stagger-4">
+                  <div class="h-36 bg-gradient-to-br from-purple-400 via-violet-500 to-indigo-500 relative overflow-hidden">
+                    <div class="offer-image absolute inset-0 flex items-center justify-center">
+                      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center">
+                        <span class="text-4xl">&#x1F3B0;</span>
+                      </div>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-1">GoldenSlots Casino</h3>
-                    <p class="text-sm text-gray-500 mb-3 line-clamp-2">Premium online casino with 45% rev share</p>
+                  </div>
+                  <div class="p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span class="badge badge-purple">Gaming</span>
+                      <span class="badge badge-warning">RevShare</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">GoldenSlots Casino</h3>
+                    <p class="text-sm text-gray-500 mb-4 line-clamp-2">Premium online casino with 45% rev share</p>
                     <div class="flex items-center justify-between">
-                      <span class="text-lg font-bold text-indigo-600">45%</span>
-                      <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Get Link</button>
+                      <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">45%</span>
+                      <button class="btn-primary text-sm py-2 px-4">Get Link</button>
                     </div>
                   </div>
                 </div>
 
                 <!-- Offer Card 5 -->
-                <div class="offer-card">
-                  <div class="h-32 bg-gradient-to-br from-amber-400 to-amber-600"></div>
-                  <div class="p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="badge badge-success">Finance</span>
+                <div class="offer-card animate-fade-up stagger-5">
+                  <div class="h-36 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 relative overflow-hidden">
+                    <div class="offer-image absolute inset-0 flex items-center justify-center">
+                      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center">
+                        <span class="text-4xl">&#x1F4B3;</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span class="badge badge-warning">Finance</span>
                       <span class="badge badge-info">CPL</span>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-1">QuickLoans Direct</h3>
-                    <p class="text-sm text-gray-500 mb-3 line-clamp-2">Fast personal loans with high approval rates</p>
+                    <h3 class="font-bold text-gray-900 mb-2">QuickLoans Direct</h3>
+                    <p class="text-sm text-gray-500 mb-4 line-clamp-2">Fast personal loans with high approval rates</p>
                     <div class="flex items-center justify-between">
-                      <span class="text-lg font-bold text-indigo-600">$28.00</span>
-                      <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Get Link</button>
+                      <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">$28.00</span>
+                      <button class="btn-primary text-sm py-2 px-4">Get Link</button>
                     </div>
                   </div>
                 </div>
 
                 <!-- Offer Card 6 -->
-                <div class="offer-card">
-                  <div class="h-32 bg-gradient-to-br from-teal-400 to-teal-600"></div>
-                  <div class="p-4">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="badge badge-info">E-Commerce</span>
-                      <span class="badge badge-info">CPS</span>
+                <div class="offer-card animate-fade-up stagger-6">
+                  <div class="h-36 bg-gradient-to-br from-teal-400 via-cyan-500 to-blue-500 relative overflow-hidden">
+                    <div class="offer-image absolute inset-0 flex items-center justify-center">
+                      <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center">
+                        <span class="text-4xl">&#x1F6D2;</span>
+                      </div>
                     </div>
-                    <h3 class="font-semibold text-gray-900 mb-1">ShopMart Plus</h3>
-                    <p class="text-sm text-gray-500 mb-3 line-clamp-2">Global e-commerce platform with 8% commission</p>
+                  </div>
+                  <div class="p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                      <span class="badge badge-info">E-Commerce</span>
+                      <span class="badge badge-success">CPS</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2">ShopMart Plus</h3>
+                    <p class="text-sm text-gray-500 mb-4 line-clamp-2">Global e-commerce platform with 8% commission</p>
                     <div class="flex items-center justify-between">
-                      <span class="text-lg font-bold text-indigo-600">8%</span>
-                      <button class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Get Link</button>
+                      <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">8%</span>
+                      <button class="btn-primary text-sm py-2 px-4">Get Link</button>
                     </div>
                   </div>
                 </div>
@@ -737,137 +1269,163 @@
         </div>
 
         <!-- Managers Section -->
-        <div class="mt-8">
+        <div class="mb-8">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-gray-900">Your Affiliate Managers</h2>
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">Your Affiliate Managers</h2>
+              <p class="text-gray-500 text-sm mt-1">Get support from our dedicated team</p>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Manager Card 1 -->
-            <div class="card">
+            <div class="manager-card animate-fade-up stagger-1">
               <div class="flex items-start gap-4">
-                <div class="avatar" style="width: 3rem; height: 3rem; font-size: 1rem;">SJ</div>
+                <div class="relative">
+                  <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 via-rose-500 to-red-500 flex items-center justify-center text-white text-xl font-bold shadow-lg float">
+                    SJ
+                  </div>
+                  <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white"></div>
+                </div>
                 <div class="flex-1">
-                  <h3 class="font-semibold text-gray-900">Sarah Johnson</h3>
-                  <p class="text-sm text-gray-500">Senior Account Manager</p>
-                  <div class="flex items-center gap-4 mt-3 text-sm text-gray-500">
-                    <span class="flex items-center gap-1">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                      </svg>
-                      sarah@affiliate.com
-                    </span>
-                  </div>
-                  <div class="flex items-center gap-3 mt-3">
-                    <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">Skype: live:sarah.manager</span>
-                    <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">@sarah_manager</span>
-                  </div>
+                  <h3 class="font-bold text-gray-900 text-lg">Sarah Johnson</h3>
+                  <p class="text-sm text-indigo-600 font-medium">Senior Account Manager</p>
+                  <p class="text-sm text-gray-500 mt-1">sarah@affiliate.com</p>
                 </div>
               </div>
-              <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+              <div class="flex items-center gap-3 mt-5">
+                <span class="badge badge-info">Skype: live:sarah.manager</span>
+                <span class="badge badge-purple">@sarah_manager</span>
+              </div>
+              <div class="mt-5 pt-5 border-t border-gray-100 flex items-center justify-between">
                 <span class="text-sm text-gray-500">Assigned Affiliates</span>
-                <span class="badge badge-info">12</span>
+                <span class="text-lg font-bold text-indigo-600">12</span>
               </div>
             </div>
 
             <!-- Manager Card 2 -->
-            <div class="card">
+            <div class="manager-card animate-fade-up stagger-2">
               <div class="flex items-start gap-4">
-                <div class="avatar" style="width: 3rem; height: 3rem; font-size: 1rem;">MW</div>
+                <div class="relative">
+                  <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg float-delayed">
+                    MW
+                  </div>
+                  <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white"></div>
+                </div>
                 <div class="flex-1">
-                  <h3 class="font-semibold text-gray-900">Mike Williams</h3>
-                  <p class="text-sm text-gray-500">Account Manager</p>
-                  <div class="flex items-center gap-4 mt-3 text-sm text-gray-500">
-                    <span class="flex items-center gap-1">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                      </svg>
-                      mike@affiliate.com
-                    </span>
-                  </div>
-                  <div class="flex items-center gap-3 mt-3">
-                    <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">Skype: live:mike.williams</span>
-                    <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">@mike_aff</span>
-                  </div>
+                  <h3 class="font-bold text-gray-900 text-lg">Mike Williams</h3>
+                  <p class="text-sm text-indigo-600 font-medium">Account Manager</p>
+                  <p class="text-sm text-gray-500 mt-1">mike@affiliate.com</p>
                 </div>
               </div>
-              <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+              <div class="flex items-center gap-3 mt-5">
+                <span class="badge badge-info">Skype: live:mike.williams</span>
+                <span class="badge badge-purple">@mike_aff</span>
+              </div>
+              <div class="mt-5 pt-5 border-t border-gray-100 flex items-center justify-between">
                 <span class="text-sm text-gray-500">Assigned Affiliates</span>
-                <span class="badge badge-info">8</span>
+                <span class="text-lg font-bold text-indigo-600">8</span>
               </div>
             </div>
 
             <!-- Add Manager Card -->
-            <div class="card border-2 border-dashed border-gray-200 flex items-center justify-center min-h-[200px] hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors cursor-pointer">
+            <div class="manager-card border-2 border-dashed border-gray-200 flex items-center justify-center min-h-[250px] hover:border-indigo-300 hover:bg-indigo-50/50 transition-all cursor-pointer animate-fade-up stagger-3">
               <div class="text-center">
-                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                  <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mx-auto mb-4 bounce-soft">
+                  <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                   </svg>
                 </div>
-                <p class="text-gray-500 font-medium">Add New Manager</p>
+                <p class="text-gray-600 font-semibold">Add New Manager</p>
+                <p class="text-gray-400 text-sm mt-1">Expand your team</p>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Recent Conversions -->
-        <div class="mt-8">
-          <div class="card">
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="text-lg font-semibold text-gray-900">Recent Conversions</h2>
-              <button class="text-indigo-600 text-sm font-medium hover:text-indigo-700">View All</button>
+        <div class="card animate-fade-up">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-xl font-bold text-gray-900">Recent Conversions</h2>
+              <p class="text-gray-500 text-sm mt-1">Your latest conversion activity</p>
             </div>
-            <div class="overflow-x-auto">
-              <table class="w-full">
-                <thead>
-                  <tr class="text-left text-sm text-gray-500 border-b border-gray-100">
-                    <th class="pb-3 font-medium">Click ID</th>
-                    <th class="pb-3 font-medium">Offer</th>
-                    <th class="pb-3 font-medium">Payout</th>
-                    <th class="pb-3 font-medium">Status</th>
-                    <th class="pb-3 font-medium">Date</th>
-                  </tr>
-                </thead>
-                <tbody class="text-sm">
-                  <tr class="border-b border-gray-50">
-                    <td class="py-3 font-mono text-gray-600">clk_8x7f2a9...</td>
-                    <td class="py-3 text-gray-900">NutraBoost Pro</td>
-                    <td class="py-3 font-semibold text-green-600">$45.00</td>
-                    <td class="py-3"><span class="badge badge-success">Approved</span></td>
-                    <td class="py-3 text-gray-500">2 mins ago</td>
-                  </tr>
-                  <tr class="border-b border-gray-50">
-                    <td class="py-3 font-mono text-gray-600">clk_3k9m1b4...</td>
-                    <td class="py-3 text-gray-900">CryptoTrade Elite</td>
-                    <td class="py-3 font-semibold text-green-600">$120.00</td>
-                    <td class="py-3"><span class="badge badge-warning">Pending</span></td>
-                    <td class="py-3 text-gray-500">15 mins ago</td>
-                  </tr>
-                  <tr class="border-b border-gray-50">
-                    <td class="py-3 font-mono text-gray-600">clk_7n2p5c8...</td>
-                    <td class="py-3 text-gray-900">DateMatch Premium</td>
-                    <td class="py-3 font-semibold text-green-600">$35.00</td>
-                    <td class="py-3"><span class="badge badge-success">Approved</span></td>
-                    <td class="py-3 text-gray-500">32 mins ago</td>
-                  </tr>
-                  <tr class="border-b border-gray-50">
-                    <td class="py-3 font-mono text-gray-600">clk_1x4y7z2...</td>
-                    <td class="py-3 text-gray-900">GoldenSlots Casino</td>
-                    <td class="py-3 font-semibold text-green-600">$80.00</td>
-                    <td class="py-3"><span class="badge badge-success">Approved</span></td>
-                    <td class="py-3 text-gray-500">1 hour ago</td>
-                  </tr>
-                  <tr>
-                    <td class="py-3 font-mono text-gray-600">clk_9w3v6u1...</td>
-                    <td class="py-3 text-gray-900">QuickLoans Direct</td>
-                    <td class="py-3 font-semibold text-green-600">$28.00</td>
-                    <td class="py-3"><span class="badge badge-success">Approved</span></td>
-                    <td class="py-3 text-gray-500">2 hours ago</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <button class="text-indigo-600 text-sm font-medium hover:text-indigo-700 transition-colors">View All</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left text-sm text-gray-500 border-b border-gray-100">
+                  <th class="pb-4 font-semibold">Click ID</th>
+                  <th class="pb-4 font-semibold">Offer</th>
+                  <th class="pb-4 font-semibold">Payout</th>
+                  <th class="pb-4 font-semibold">Status</th>
+                  <th class="pb-4 font-semibold">Date</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr class="table-row border-b border-gray-50">
+                  <td class="py-4 font-mono text-gray-600">clk_8x7f2a9...</td>
+                  <td class="py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white text-xs font-bold">N</div>
+                      <span class="font-medium text-gray-900">NutraBoost Pro</span>
+                    </div>
+                  </td>
+                  <td class="py-4 font-bold text-green-600">$45.00</td>
+                  <td class="py-4"><span class="badge badge-success">Approved</span></td>
+                  <td class="py-4 text-gray-500">2 mins ago</td>
+                </tr>
+                <tr class="table-row border-b border-gray-50">
+                  <td class="py-4 font-mono text-gray-600">clk_3k9m1b4...</td>
+                  <td class="py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xs font-bold">C</div>
+                      <span class="font-medium text-gray-900">CryptoTrade Elite</span>
+                    </div>
+                  </td>
+                  <td class="py-4 font-bold text-green-600">$120.00</td>
+                  <td class="py-4"><span class="badge badge-warning">Pending</span></td>
+                  <td class="py-4 text-gray-500">15 mins ago</td>
+                </tr>
+                <tr class="table-row border-b border-gray-50">
+                  <td class="py-4 font-mono text-gray-600">clk_7n2p5c8...</td>
+                  <td class="py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-xs font-bold">D</div>
+                      <span class="font-medium text-gray-900">DateMatch Premium</span>
+                    </div>
+                  </td>
+                  <td class="py-4 font-bold text-green-600">$35.00</td>
+                  <td class="py-4"><span class="badge badge-success">Approved</span></td>
+                  <td class="py-4 text-gray-500">32 mins ago</td>
+                </tr>
+                <tr class="table-row border-b border-gray-50">
+                  <td class="py-4 font-mono text-gray-600">clk_1x4y7z2...</td>
+                  <td class="py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center text-white text-xs font-bold">G</div>
+                      <span class="font-medium text-gray-900">GoldenSlots Casino</span>
+                    </div>
+                  </td>
+                  <td class="py-4 font-bold text-green-600">$80.00</td>
+                  <td class="py-4"><span class="badge badge-success">Approved</span></td>
+                  <td class="py-4 text-gray-500">1 hour ago</td>
+                </tr>
+                <tr class="table-row">
+                  <td class="py-4 font-mono text-gray-600">clk_9w3v6u1...</td>
+                  <td class="py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold">Q</div>
+                      <span class="font-medium text-gray-900">QuickLoans Direct</span>
+                    </div>
+                  </td>
+                  <td class="py-4 font-bold text-green-600">$28.00</td>
+                  <td class="py-4"><span class="badge badge-success">Approved</span></td>
+                  <td class="py-4 text-gray-500">2 hours ago</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -876,7 +1434,7 @@
   </div>
 
   <script>
-    // Simple interactive elements
+    // Interactive elements
     document.querySelectorAll('.vertical-tab').forEach(tab => {
       tab.addEventListener('click', function() {
         document.querySelectorAll('.vertical-tab').forEach(t => t.classList.remove('vertical-tab-active'));
@@ -896,6 +1454,23 @@
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-btn-active'));
         this.classList.add('tab-btn-active');
       });
+    });
+
+    // Add hover sound effect simulation with visual feedback
+    document.querySelectorAll('.offer-card, .stat-card, .manager-card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+      });
+    });
+
+    // Animate chart bars on load
+    document.querySelectorAll('.chart-bar').forEach((bar, index) => {
+      const height = bar.style.height;
+      bar.style.height = '0%';
+      setTimeout(() => {
+        bar.style.transition = 'height 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        bar.style.height = height;
+      }, 100 + index * 100);
     });
   </script>
 </body>
