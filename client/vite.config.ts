@@ -1,0 +1,27 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/track': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/c': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/postback': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      }
+    }
+  }
+});
