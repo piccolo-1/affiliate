@@ -2,373 +2,414 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --sidebar-bg: #0f172a;
-  --sidebar-hover: #1e293b;
-  --sidebar-active: #3b82f6;
-  --sidebar-text: #94a3b8;
+  /* Toss-inspired color palette */
+  --primary: #3182f6;
+  --primary-light: #4593fc;
+  --primary-dark: #1b64da;
+  --primary-bg: #e8f3ff;
+
+  --success: #00c471;
+  --success-light: #e8f9f1;
+  --warning: #ff9500;
+  --warning-light: #fff5e6;
+  --danger: #f04452;
+  --danger-light: #ffebee;
+
+  /* Neutral palette */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* Sidebar (Everflow-inspired dark theme) */
+  --sidebar-bg: #0f1729;
+  --sidebar-hover: #1a2744;
+  --sidebar-active: #3182f6;
+  --sidebar-text: #8892a6;
   --sidebar-text-active: #ffffff;
-  --content-bg: #f8fafc;
+
+  /* Content */
+  --content-bg: #f7f8fa;
   --card-bg: #ffffff;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --border: #e2e8f0;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  @apply bg-slate-100 text-slate-900 antialiased;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--content-bg);
+  color: var(--gray-900);
+  line-height: 1.5;
 }
 
-/* Scrollbar */
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar - Toss style */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded-full;
+  background: var(--gray-300);
+  border-radius: 100px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400;
+  background: var(--gray-400);
 }
 
-/* Card styles */
+/* ==================== TOSS-STYLE CARDS ==================== */
 .card {
-  @apply bg-white rounded-xl border border-slate-200/60 p-6 shadow-sm;
+  @apply bg-white rounded-2xl p-6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
 }
 
 .card-dark {
-  @apply bg-slate-800 rounded-xl border border-slate-700 p-6;
+  @apply bg-gray-900 rounded-2xl p-6 text-white;
 }
 
-/* Stat card */
+/* Stat cards - Toss style with gradient accents */
 .stat-card {
-  @apply bg-white rounded-xl border border-slate-200/60 p-5 transition-all duration-200 hover:shadow-md hover:border-slate-300;
+  @apply bg-white rounded-2xl p-5 relative overflow-hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Button styles */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(49, 130, 246, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+/* ==================== TOSS-STYLE BUTTONS ==================== */
 .btn {
-  @apply inline-flex items-center justify-center px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center font-semibold text-sm transition-all duration-200;
+  padding: 12px 20px;
+  border-radius: 12px;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.btn:active::after {
+  opacity: 0.1;
 }
 
 .btn-primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm;
+  background: linear-gradient(135deg, #3182f6 0%, #1b64da 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(49, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4593fc 0%, #3182f6 100%);
+  box-shadow: 0 4px 16px rgba(49, 130, 246, 0.4);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
-  @apply bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 focus:ring-blue-500;
+  @apply bg-gray-100 text-gray-700;
+}
+
+.btn-secondary:hover {
+  @apply bg-gray-200;
 }
 
 .btn-success {
-  @apply bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500;
+  background: linear-gradient(135deg, #00c471 0%, #00a85d 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 196, 113, 0.3);
+}
+
+.btn-success:hover {
+  box-shadow: 0 4px 16px rgba(0, 196, 113, 0.4);
+  transform: translateY(-1px);
 }
 
 .btn-danger {
-  @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  background: linear-gradient(135deg, #f04452 0%, #d93845 100%);
+  color: white;
 }
 
 .btn-ghost {
-  @apply text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:ring-slate-500;
+  @apply bg-transparent text-gray-600;
+}
+
+.btn-ghost:hover {
+  @apply bg-gray-100 text-gray-900;
+}
+
+.btn-outline {
+  @apply bg-transparent border-2 border-gray-200 text-gray-700;
+}
+
+.btn-outline:hover {
+  @apply border-primary bg-primary/5 text-primary;
 }
 
 .btn-sm {
-  @apply px-3 py-1.5 text-xs;
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 10px;
 }
 
 .btn-lg {
-  @apply px-6 py-3 text-base;
+  padding: 16px 28px;
+  font-size: 16px;
+  border-radius: 14px;
 }
 
-/* Input styles */
+.btn-icon {
+  @apply p-2.5 rounded-xl;
+}
+
+/* ==================== TOSS-STYLE INPUTS ==================== */
 .input {
-  @apply block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none;
+  @apply block w-full bg-gray-50 text-gray-900 placeholder-gray-400 transition-all duration-200;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  font-size: 15px;
 }
 
-.input-dark {
-  @apply block w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2.5 text-sm text-white placeholder-slate-400 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none;
+.input:focus {
+  @apply bg-white outline-none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(49, 130, 246, 0.1);
 }
 
 .input-error {
-  @apply border-red-500 focus:border-red-500 focus:ring-red-500/20;
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 4px rgba(240, 68, 82, 0.1) !important;
 }
 
-/* Select styles */
 select.input {
-  @apply appearance-none bg-no-repeat cursor-pointer;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.75rem center;
-  background-size: 1.25em 1.25em;
-  padding-right: 2.5rem;
+  @apply cursor-pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  padding-right: 44px;
 }
 
-/* Badge styles */
+/* ==================== BADGES - Everflow/Offervault style ==================== */
 .badge {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
+  @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold;
 }
 
 .badge-success {
-  @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
+  background: var(--success-light);
+  color: #059669;
 }
 
 .badge-warning {
-  @apply bg-amber-50 text-amber-700 border border-amber-200;
+  background: var(--warning-light);
+  color: #d97706;
 }
 
 .badge-danger {
-  @apply bg-red-50 text-red-700 border border-red-200;
+  background: var(--danger-light);
+  color: #dc2626;
 }
 
 .badge-info {
-  @apply bg-blue-50 text-blue-700 border border-blue-200;
+  background: var(--primary-bg);
+  color: var(--primary);
 }
 
 .badge-gray {
-  @apply bg-slate-100 text-slate-600 border border-slate-200;
+  @apply bg-gray-100 text-gray-600;
 }
 
 .badge-purple {
-  @apply bg-purple-50 text-purple-700 border border-purple-200;
+  background: #f3e8ff;
+  color: #7c3aed;
 }
 
-/* Table styles */
+.badge-cyan {
+  background: #e0f7fa;
+  color: #0891b2;
+}
+
+/* Payout type badges - Offervault style */
+.payout-badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide;
+}
+
+.payout-cpa { @apply bg-emerald-100 text-emerald-700; }
+.payout-cpl { @apply bg-blue-100 text-blue-700; }
+.payout-cpc { @apply bg-purple-100 text-purple-700; }
+.payout-cpm { @apply bg-orange-100 text-orange-700; }
+.payout-cpi { @apply bg-pink-100 text-pink-700; }
+.payout-revshare { @apply bg-amber-100 text-amber-700; }
+
+/* ==================== TABLES - Everflow style ==================== */
 .table-container {
-  @apply overflow-x-auto rounded-xl border border-slate-200/60 bg-white shadow-sm;
+  @apply bg-white rounded-2xl overflow-hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 table {
-  @apply min-w-full divide-y divide-slate-200;
+  @apply w-full;
 }
 
 thead {
-  @apply bg-slate-50/80;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 th {
-  @apply px-6 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider;
+  @apply px-5 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider;
+  border-bottom: 1px solid var(--gray-200);
 }
 
 td {
-  @apply px-6 py-4 text-sm text-slate-600;
+  @apply px-5 py-4 text-sm text-gray-600;
 }
 
 tbody tr {
-  @apply border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors;
+  @apply transition-colors duration-150;
+  border-bottom: 1px solid var(--gray-100);
 }
 
-/* Tabs */
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: var(--gray-50);
+}
+
+/* ==================== TABS - Toss style ==================== */
 .tab-list {
-  @apply flex gap-1 p-1 bg-slate-100 rounded-lg;
+  @apply flex gap-1 p-1.5 bg-gray-100 rounded-xl;
 }
 
 .tab {
-  @apply px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 text-slate-600 hover:text-slate-900;
+  @apply px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-gray-500;
+}
+
+.tab:hover {
+  @apply text-gray-700;
 }
 
 .tab-active {
-  @apply bg-white text-slate-900 shadow-sm;
+  @apply bg-white text-gray-900;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Vertical tabs */
+/* Vertical tabs - Offervault style */
 .vertical-tab-list {
   @apply flex flex-col gap-1;
 }
 
 .vertical-tab {
-  @apply px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-left;
+  @apply flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-gray-600;
+}
+
+.vertical-tab:hover {
+  @apply bg-gray-100 text-gray-900;
 }
 
 .vertical-tab-active {
-  @apply bg-blue-50 text-blue-700 hover:bg-blue-50;
+  background: linear-gradient(135deg, var(--primary-bg) 0%, #dbeafe 100%);
+  color: var(--primary);
+  font-weight: 600;
 }
 
-/* Metric display */
-.metric {
-  @apply text-2xl font-bold text-slate-900;
-}
-
-.metric-sm {
-  @apply text-lg font-semibold text-slate-900;
-}
-
-.metric-label {
-  @apply text-xs font-medium text-slate-500 uppercase tracking-wide;
-}
-
-/* Sidebar nav item */
+/* ==================== NAVIGATION - Toss/Everflow blend ==================== */
 .nav-item {
-  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
+  @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200;
 }
 
 .nav-item-inactive {
-  @apply text-slate-400 hover:text-white hover:bg-slate-800;
+  color: var(--sidebar-text);
+}
+
+.nav-item-inactive:hover {
+  background: var(--sidebar-hover);
+  color: white;
 }
 
 .nav-item-active {
-  @apply text-white bg-blue-600;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.4);
 }
 
-/* Avatar */
-.avatar {
-  @apply w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm;
-}
-
-.avatar-sm {
-  @apply w-7 h-7 text-xs;
-}
-
-.avatar-lg {
-  @apply w-12 h-12 text-lg;
-}
-
-/* Dropdown */
-.dropdown {
-  @apply absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50;
-}
-
-.dropdown-item {
-  @apply block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors;
-}
-
-/* Chart container */
-.chart-container {
-  @apply bg-white rounded-xl border border-slate-200/60 p-6 shadow-sm;
-}
-
-/* Loading spinner */
-.spinner {
-  @apply animate-spin rounded-full border-2 border-slate-200 border-t-blue-600;
-}
-
-/* Modal overlay */
-.modal-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm;
-}
-
-.modal {
-  @apply bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in;
-}
-
-.modal-header {
-  @apply flex items-center justify-between px-6 py-4 border-b border-slate-200;
-}
-
-.modal-body {
-  @apply px-6 py-5;
-}
-
-.modal-footer {
-  @apply flex gap-3 px-6 py-4 bg-slate-50 border-t border-slate-200;
-}
-
-/* Progress bar */
-.progress-bar {
-  @apply h-2 bg-slate-200 rounded-full overflow-hidden;
-}
-
-.progress-bar-fill {
-  @apply h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500;
-}
-
-/* Notification dot */
-.notification-dot {
-  @apply absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white;
-}
-
-/* Category pills */
-.category-pill {
-  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer;
-}
-
-.category-pill-inactive {
-  @apply bg-slate-100 text-slate-600 hover:bg-slate-200;
-}
-
-.category-pill-active {
-  @apply bg-blue-600 text-white;
-}
-
-/* Status indicator */
-.status-dot {
-  @apply w-2 h-2 rounded-full;
-}
-
-.status-dot-online {
-  @apply bg-emerald-500;
-}
-
-.status-dot-offline {
-  @apply bg-slate-300;
-}
-
-.status-dot-busy {
-  @apply bg-amber-500;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.animate-slide-in {
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Gradient backgrounds for cards */
-.gradient-blue {
-  @apply bg-gradient-to-br from-blue-500 to-blue-600;
-}
-
-.gradient-green {
-  @apply bg-gradient-to-br from-emerald-500 to-emerald-600;
-}
-
-.gradient-purple {
-  @apply bg-gradient-to-br from-purple-500 to-purple-600;
-}
-
-.gradient-orange {
-  @apply bg-gradient-to-br from-orange-500 to-orange-600;
-}
-
-/* Sidebar styles */
+/* ==================== SIDEBAR - Everflow style ==================== */
 .sidebar {
-  @apply fixed inset-y-0 left-0 w-64 bg-slate-900 z-30;
+  background: linear-gradient(180deg, #0f1729 0%, #1a2744 100%);
+  @apply fixed inset-y-0 left-0 w-64 z-30;
 }
 
 .sidebar-header {
-  @apply h-16 flex items-center px-6 border-b border-slate-800;
+  @apply h-16 flex items-center px-5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .sidebar-nav {
@@ -376,9 +417,441 @@ tbody tr {
 }
 
 .sidebar-section {
-  @apply mt-6 pt-6 border-t border-slate-800;
+  @apply mt-6 pt-6;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .sidebar-section-title {
-  @apply px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider;
+  @apply px-4 mb-3 text-xs font-semibold uppercase tracking-wider;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ==================== AVATAR - Toss style ==================== */
+.avatar {
+  @apply w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm;
+  background: linear-gradient(135deg, #3182f6 0%, #7c3aed 100%);
+}
+
+.avatar-sm {
+  @apply w-8 h-8 text-xs;
+}
+
+.avatar-lg {
+  @apply w-14 h-14 text-lg;
+}
+
+/* ==================== DROPDOWN - Toss style ==================== */
+.dropdown {
+  @apply absolute right-0 mt-2 w-60 bg-white rounded-2xl py-2 z-50;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.dropdown-item {
+  @apply block px-4 py-3 text-sm text-gray-700 transition-colors duration-150;
+}
+
+.dropdown-item:hover {
+  @apply bg-gray-50;
+}
+
+/* ==================== MODAL - Toss style ==================== */
+.modal-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  @apply bg-white w-full max-w-lg overflow-hidden;
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  @apply flex items-center justify-between px-6 py-5;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.modal-body {
+  @apply px-6 py-5;
+}
+
+.modal-footer {
+  @apply flex gap-3 px-6 py-4 bg-gray-50;
+  border-top: 1px solid var(--gray-100);
+}
+
+/* ==================== METRICS - Everflow style ==================== */
+.metric {
+  @apply text-3xl font-bold text-gray-900 tracking-tight;
+}
+
+.metric-sm {
+  @apply text-xl font-semibold text-gray-900;
+}
+
+.metric-label {
+  @apply text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.metric-change {
+  @apply inline-flex items-center gap-1 text-xs font-semibold rounded-full px-2 py-0.5;
+}
+
+.metric-change-up {
+  @apply bg-emerald-50 text-emerald-600;
+}
+
+.metric-change-down {
+  @apply bg-red-50 text-red-600;
+}
+
+/* ==================== PROGRESS BAR - Toss style ==================== */
+.progress-bar {
+  @apply h-2 bg-gray-100 rounded-full overflow-hidden;
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-full transition-all duration-500 ease-out;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+/* ==================== NOTIFICATION DOT ==================== */
+.notification-dot {
+  @apply absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white;
+  background: var(--danger);
+}
+
+/* ==================== OFFER CARDS - Offervault style ==================== */
+.offer-card {
+  @apply bg-white rounded-2xl p-5 relative overflow-hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.offer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.offer-card-featured {
+  border: 2px solid var(--primary);
+}
+
+.offer-card-featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary) 0%, #7c3aed 100%);
+}
+
+/* Offer payout display */
+.offer-payout {
+  @apply text-2xl font-bold;
+  background: linear-gradient(135deg, #059669 0%, #00c471 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==================== TRACKING PAGE - Everflow style ==================== */
+.tracking-metric-card {
+  @apply bg-white rounded-2xl p-6 relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tracking-metric-card .metric-icon {
+  @apply w-12 h-12 rounded-xl flex items-center justify-center mb-4;
+}
+
+.tracking-metric-card.clicks .metric-icon {
+  background: linear-gradient(135deg, #3182f6 0%, #60a5fa 100%);
+}
+
+.tracking-metric-card.conversions .metric-icon {
+  background: linear-gradient(135deg, #00c471 0%, #34d399 100%);
+}
+
+.tracking-metric-card.revenue .metric-icon {
+  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+}
+
+.tracking-metric-card.epc .metric-icon {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* ==================== CHART CONTAINER ==================== */
+.chart-container {
+  @apply bg-white rounded-2xl p-6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* ==================== GRADIENTS ==================== */
+.gradient-blue {
+  background: linear-gradient(135deg, #3182f6 0%, #1b64da 100%);
+}
+
+.gradient-green {
+  background: linear-gradient(135deg, #00c471 0%, #00a85d 100%);
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+}
+
+.gradient-orange {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.gradient-pink {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+}
+
+.gradient-cyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==================== COUNTRY FLAGS ==================== */
+.country-flag {
+  @apply inline-flex items-center justify-center w-6 h-4 rounded text-xs font-bold bg-gray-100 text-gray-600;
+}
+
+/* ==================== TRAFFIC SOURCE TAGS ==================== */
+.traffic-tag {
+  @apply inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium;
+}
+
+.traffic-tag-allowed {
+  @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
+}
+
+.traffic-tag-restricted {
+  @apply bg-red-50 text-red-700 border border-red-200;
+}
+
+/* ==================== FILTER PILLS ==================== */
+.filter-pill {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer;
+}
+
+.filter-pill-inactive {
+  @apply bg-white text-gray-600 border border-gray-200;
+}
+
+.filter-pill-inactive:hover {
+  @apply border-gray-300 bg-gray-50;
+}
+
+.filter-pill-active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  @apply text-white;
+  box-shadow: 0 2px 8px rgba(49, 130, 246, 0.3);
+}
+
+/* ==================== SEARCH BOX - Toss style ==================== */
+.search-box {
+  @apply relative;
+}
+
+.search-box input {
+  @apply w-full bg-gray-100 text-gray-900 placeholder-gray-400 transition-all duration-200;
+  padding: 12px 16px 12px 44px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+}
+
+.search-box input:focus {
+  @apply bg-white;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(49, 130, 246, 0.1);
+}
+
+.search-box .search-icon {
+  @apply absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400;
+}
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state {
+  @apply text-center py-16;
+}
+
+.empty-state-icon {
+  @apply w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center;
+  background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+}
+
+.empty-state-icon svg {
+  @apply w-10 h-10 text-gray-400;
+}
+
+.empty-state-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.empty-state-text {
+  @apply text-gray-500 mb-6;
+}
+
+/* ==================== DATA GRID - Everflow style ==================== */
+.data-grid {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* ==================== LIVE INDICATOR ==================== */
+.live-indicator {
+  @apply inline-flex items-center gap-2 text-xs font-medium;
+}
+
+.live-indicator::before {
+  content: '';
+  @apply w-2 h-2 rounded-full bg-emerald-500;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ==================== TOOLTIP ==================== */
+.tooltip {
+  @apply absolute z-50 px-3 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip::before {
+  content: '';
+  @apply absolute w-2 h-2 bg-gray-900 rotate-45;
+}
+
+/* ==================== STATUS INDICATOR ==================== */
+.status-dot {
+  @apply w-2.5 h-2.5 rounded-full;
+}
+
+.status-dot-online {
+  @apply bg-emerald-500;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.status-dot-offline {
+  @apply bg-gray-300;
+}
+
+.status-dot-warning {
+  @apply bg-amber-500;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+/* ==================== RESPONSIVE UTILITIES ==================== */
+@media (max-width: 640px) {
+  .card {
+    @apply rounded-xl p-4;
+  }
+
+  .btn {
+    padding: 10px 16px;
+  }
+
+  .metric {
+    @apply text-2xl;
+  }
 }

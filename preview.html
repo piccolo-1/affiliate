@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AffiliateNet - Performance Marketing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f4f8',
+              100: '#d9e2ec',
+              200: '#bcccdc',
+              300: '#9fb3c8',
+              400: '#829ab1',
+              500: '#627d98',
+              600: '#486581',
+              700: '#334e68',
+              800: '#243b53',
+              900: '#102a43',
+            },
+            accent: {
+              400: '#4c9aff',
+              500: '#2684ff',
+              600: '#0065ff',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    /* Smooth Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(20deg); }
+      75% { transform: rotate(-15deg); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
+    .animate-fadeIn { animation: fadeIn 0.5s ease-out forwards; }
+    .animate-slideInLeft { animation: slideInLeft 0.6s ease-out forwards; }
+    .animate-slideInRight { animation: slideInRight 0.6s ease-out forwards; }
+    .animate-scaleIn { animation: scaleIn 0.5s ease-out forwards; }
+    .animate-bounce-slow { animation: bounce 3s ease-in-out infinite; }
+    .animate-wave { animation: wave 2s ease-in-out infinite; }
+
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* Page transitions */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, #102a43 0%, #243b53 100%);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #9fb3c8;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: rgba(38, 132, 255, 0.15);
+      color: #4c9aff;
+    }
+
+    /* Cards */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e4e7eb;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 20px rgba(16, 42, 67, 0.08);
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid #e4e7eb;
+      transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+      border-color: #2684ff;
+      box-shadow: 0 4px 20px rgba(38, 132, 255, 0.1);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #2684ff 0%, #0065ff 100%);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(38, 132, 255, 0.4);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #334e68;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      border: 1px solid #d9e2ec;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      border-color: #2684ff;
+      color: #2684ff;
+    }
+
+    /* Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #627d98;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e4e7eb;
+      background: #f7f9fc;
+    }
+
+    .data-table td {
+      padding: 16px;
+      font-size: 14px;
+      color: #334e68;
+      border-bottom: 1px solid #f0f4f8;
+    }
+
+    .data-table tr:hover td {
+      background: #f7f9fc;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-warning { background: #fff3cd; color: #856404; }
+    .badge-info { background: #d1ecf1; color: #0c5460; }
+    .badge-primary { background: #cce5ff; color: #004085; }
+
+    /* Korean Cartoon Character Styles */
+    .character {
+      position: relative;
+      display: inline-block;
+    }
+
+    .character-body {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #4c9aff 0%, #2684ff 100%);
+      border-radius: 40% 40% 45% 45%;
+      position: relative;
+      box-shadow: 0 8px 25px rgba(38, 132, 255, 0.3);
+    }
+
+    .character-face {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .character-eye {
+      width: 10px;
+      height: 14px;
+      background: #102a43;
+      border-radius: 50%;
+      display: inline-block;
+      margin: 0 6px;
+      position: relative;
+    }
+
+    .character-eye::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    .character-mouth {
+      width: 20px;
+      height: 10px;
+      border: 3px solid #102a43;
+      border-top: none;
+      border-radius: 0 0 20px 20px;
+      margin: 8px auto 0;
+    }
+
+    .character-blush {
+      width: 12px;
+      height: 6px;
+      background: rgba(255, 150, 150, 0.6);
+      border-radius: 50%;
+      position: absolute;
+      top: 55%;
+    }
+
+    .character-blush.left { left: 8px; }
+    .character-blush.right { right: 8px; }
+
+    .character-arm {
+      width: 20px;
+      height: 35px;
+      background: linear-gradient(135deg, #4c9aff 0%, #2684ff 100%);
+      border-radius: 10px;
+      position: absolute;
+      top: 50%;
+    }
+
+    .character-arm.left {
+      left: -15px;
+      transform: rotate(20deg);
+    }
+
+    .character-arm.right {
+      right: -15px;
+      transform: rotate(-20deg);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f0f4f8; }
+    ::-webkit-scrollbar-thumb { background: #bcccdc; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9fb3c8; }
+
+    /* Graph container */
+    .graph-container {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e4e7eb;
+      padding: 24px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- ==================== HOME PAGE ==================== -->
+  <div id="homePage" class="page active">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 bg-gradient-to-br from-primary-700 to-primary-900 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <span class="text-xl font-bold text-primary-900">AffiliateNet</span>
+          </div>
+
+          <div class="hidden md:flex items-center gap-8">
+            <a href="#" class="text-sm font-medium text-primary-600 hover:text-primary-900 transition-colors">Platform</a>
+            <a href="#" class="text-sm font-medium text-primary-600 hover:text-primary-900 transition-colors">Solutions</a>
+            <a href="#" class="text-sm font-medium text-primary-600 hover:text-primary-900 transition-colors">Pricing</a>
+            <a href="#" class="text-sm font-medium text-primary-600 hover:text-primary-900 transition-colors">Resources</a>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <button class="text-sm font-medium text-primary-700 hover:text-primary-900 transition-colors">Log In</button>
+            <button onclick="showDashboard()" class="btn-primary text-sm py-2.5 px-5">Get Started</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-gradient-to-b from-primary-50 to-white overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+          <div class="animate-fadeInUp">
+            <div class="inline-flex items-center gap-2 bg-white border border-primary-200 rounded-full px-4 py-2 mb-6">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span class="text-sm font-medium text-primary-700">Trusted by 10,000+ affiliates worldwide</span>
+            </div>
+            <h1 class="text-5xl lg:text-6xl font-extrabold text-primary-900 leading-tight mb-6">
+              The #1 Partner Marketing
+              <span class="text-accent-500"> Platform</span>
+            </h1>
+            <p class="text-xl text-primary-600 mb-8 leading-relaxed">
+              Track, manage, and optimize your affiliate campaigns with industry-leading accuracy. Real-time analytics, fraud prevention, and seamless integrations.
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <button onclick="showDashboard()" class="btn-primary flex items-center gap-2">
+                Start Free Trial
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </button>
+              <button class="btn-secondary flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Watch Demo
+              </button>
+            </div>
+
+            <div class="flex items-center gap-8 mt-12 pt-8 border-t border-primary-100">
+              <div>
+                <p class="text-3xl font-bold text-primary-900">$2.4B+</p>
+                <p class="text-sm text-primary-500">Revenue Tracked</p>
+              </div>
+              <div class="w-px h-12 bg-primary-200"></div>
+              <div>
+                <p class="text-3xl font-bold text-primary-900">99.9%</p>
+                <p class="text-sm text-primary-500">Uptime SLA</p>
+              </div>
+              <div class="w-px h-12 bg-primary-200"></div>
+              <div>
+                <p class="text-3xl font-bold text-primary-900">50ms</p>
+                <p class="text-sm text-primary-500">Avg Response</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Image with Character -->
+          <div class="relative animate-slideInRight delay-200">
+            <div class="bg-white rounded-2xl shadow-2xl shadow-primary-900/10 p-6 border border-primary-100">
+              <!-- Mini Dashboard Preview -->
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                  <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                </div>
+                <span class="text-xs text-primary-400">dashboard.affiliatenet.com</span>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3 mb-4">
+                <div class="bg-primary-50 rounded-lg p-3">
+                  <p class="text-xs text-primary-500 mb-1">Clicks</p>
+                  <p class="text-lg font-bold text-primary-900">847.2K</p>
+                  <p class="text-xs text-green-600">+12.5%</p>
+                </div>
+                <div class="bg-primary-50 rounded-lg p-3">
+                  <p class="text-xs text-primary-500 mb-1">Conversions</p>
+                  <p class="text-lg font-bold text-primary-900">24.8K</p>
+                  <p class="text-xs text-green-600">+8.3%</p>
+                </div>
+                <div class="bg-primary-50 rounded-lg p-3">
+                  <p class="text-xs text-primary-500 mb-1">Revenue</p>
+                  <p class="text-lg font-bold text-primary-900">$142K</p>
+                  <p class="text-xs text-green-600">+15.7%</p>
+                </div>
+              </div>
+
+              <!-- Mini Chart -->
+              <div class="h-32 bg-gradient-to-t from-accent-500/10 to-transparent rounded-lg relative overflow-hidden">
+                <svg class="absolute bottom-0 left-0 right-0" viewBox="0 0 400 100" preserveAspectRatio="none">
+                  <path d="M0,80 C50,70 100,40 150,50 C200,60 250,20 300,35 C350,50 400,30 400,40 L400,100 L0,100 Z" fill="rgba(38, 132, 255, 0.2)"/>
+                  <path d="M0,80 C50,70 100,40 150,50 C200,60 250,20 300,35 C350,50 400,30 400,40" stroke="#2684ff" stroke-width="2" fill="none"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Korean Character -->
+            <div class="absolute -bottom-8 -left-8 animate-bounce-slow">
+              <div class="character">
+                <div class="character-body">
+                  <div class="character-arm left"></div>
+                  <div class="character-arm right animate-wave"></div>
+                  <div class="character-face">
+                    <div style="display: flex; justify-content: center;">
+                      <div class="character-eye"></div>
+                      <div class="character-eye"></div>
+                    </div>
+                    <div class="character-mouth"></div>
+                    <div class="character-blush left"></div>
+                    <div class="character-blush right"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-2 bg-white rounded-lg px-3 py-1.5 shadow-lg border border-primary-100">
+                <p class="text-xs font-medium text-primary-700">Hi! Let's grow! 📈</p>
+              </div>
+            </div>
+
+            <!-- Floating Stats -->
+            <div class="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg p-4 border border-primary-100 animate-scaleIn delay-400">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-primary-500">Today's Profit</p>
+                  <p class="text-lg font-bold text-primary-900">+$4,280</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-primary-900 mb-4">Everything You Need to Scale</h2>
+          <p class="text-lg text-primary-600 max-w-2xl mx-auto">Powerful features built for performance marketers who demand accuracy and speed.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="card p-8 animate-fadeInUp">
+            <div class="w-14 h-14 bg-accent-500/10 rounded-xl flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-primary-900 mb-3">Real-Time Analytics</h3>
+            <p class="text-primary-600 leading-relaxed">Track clicks, conversions, and revenue in real-time with sub-second latency. Make data-driven decisions instantly.</p>
+          </div>
+
+          <div class="card p-8 animate-fadeInUp delay-100">
+            <div class="w-14 h-14 bg-green-500/10 rounded-xl flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-primary-900 mb-3">Fraud Prevention</h3>
+            <p class="text-primary-600 leading-relaxed">Advanced bot detection and fraud prevention algorithms protect your campaigns from invalid traffic.</p>
+          </div>
+
+          <div class="card p-8 animate-fadeInUp delay-200">
+            <div class="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-primary-900 mb-3">Smart Integrations</h3>
+            <p class="text-primary-600 leading-relaxed">Connect with 100+ platforms including Shopify, Stripe, HubSpot, and custom APIs via webhooks.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="py-16 bg-primary-900">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="text-primary-300 text-sm font-medium uppercase tracking-wider">Trusted by industry leaders</p>
+        </div>
+        <div class="flex flex-wrap justify-center items-center gap-12 opacity-60">
+          <div class="text-2xl font-bold text-white">TechCorp</div>
+          <div class="text-2xl font-bold text-white">MediaMax</div>
+          <div class="text-2xl font-bold text-white">AdVenture</div>
+          <div class="text-2xl font-bold text-white">GrowthLab</div>
+          <div class="text-2xl font-bold text-white">ScaleUp</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-primary-800 to-primary-900 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-0 w-96 h-96 bg-accent-500 rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl"></div>
+      </div>
+      <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+        <h2 class="text-4xl font-bold text-white mb-6">Ready to Maximize Your Revenue?</h2>
+        <p class="text-xl text-primary-200 mb-8">Join thousands of successful affiliates and advertisers. Start your free trial today.</p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <button onclick="showDashboard()" class="bg-white text-primary-900 px-8 py-4 rounded-lg font-semibold hover:bg-primary-50 transition-colors">
+            Start Free Trial
+          </button>
+          <button class="border border-primary-400 text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+            Schedule Demo
+          </button>
+        </div>
+      </div>
+
+      <!-- Character -->
+      <div class="absolute bottom-8 right-8 hidden lg:block">
+        <div class="character" style="transform: scale(0.8);">
+          <div class="character-body" style="background: linear-gradient(135deg, #fff 0%, #e4e7eb 100%);">
+            <div class="character-arm left" style="background: linear-gradient(135deg, #fff 0%, #e4e7eb 100%);"></div>
+            <div class="character-arm right" style="background: linear-gradient(135deg, #fff 0%, #e4e7eb 100%);"></div>
+            <div class="character-face">
+              <div style="display: flex; justify-content: center;">
+                <div class="character-eye"></div>
+                <div class="character-eye"></div>
+              </div>
+              <div class="character-mouth"></div>
+              <div class="character-blush left"></div>
+              <div class="character-blush right"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary-900 text-primary-300 py-12">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-wrap justify-between gap-8">
+          <div>
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              </div>
+              <span class="text-lg font-bold text-white">AffiliateNet</span>
+            </div>
+            <p class="text-sm max-w-xs">The most powerful affiliate tracking platform for performance marketers.</p>
+          </div>
+          <div class="flex gap-16">
+            <div>
+              <p class="font-semibold text-white mb-4">Product</p>
+              <ul class="space-y-2 text-sm">
+                <li><a href="#" class="hover:text-white transition-colors">Features</a></li>
+                <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#" class="hover:text-white transition-colors">API</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold text-white mb-4">Company</p>
+              <ul class="space-y-2 text-sm">
+                <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+                <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold text-white mb-4">Support</p>
+              <ul class="space-y-2 text-sm">
+                <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                <li><a href="#" class="hover:text-white transition-colors">Status</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-primary-800 mt-12 pt-8 text-sm text-center">
+          <p>&copy; 2024 AffiliateNet. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== DASHBOARD PAGE ==================== -->
+  <div id="dashboardPage" class="page">
+    <div class="flex h-screen">
+      <!-- Sidebar -->
+      <aside class="sidebar w-64 flex flex-col">
+        <div class="p-5 border-b border-primary-700/50">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold text-white">AffiliateNet</p>
+              <p class="text-xs text-primary-400">Performance Platform</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-1">
+          <div class="nav-item active">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
+          </div>
+          <div class="nav-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+            Offers
+            <span class="ml-auto bg-accent-500 text-white text-xs px-2 py-0.5 rounded-full">24</span>
+          </div>
+          <div class="nav-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+            </svg>
+            Tracking Links
+          </div>
+          <div class="nav-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Reports
+          </div>
+          <div class="nav-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Conversions
+          </div>
+          <div class="nav-item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Payouts
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-primary-700/50">
+            <p class="px-3 text-xs font-semibold text-primary-500 uppercase tracking-wider mb-3">Admin</p>
+            <div class="nav-item">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Affiliates
+            </div>
+            <div class="nav-item">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Settings
+            </div>
+          </div>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-primary-700/50">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-accent-500 rounded-lg flex items-center justify-center text-white font-semibold">
+              JD
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-white truncate">John Doe</p>
+              <p class="text-xs text-primary-400 truncate">john@company.com</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 overflow-auto bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-2xl font-bold text-primary-900">Dashboard</h1>
+              <p class="text-sm text-primary-500">Welcome back, John. Here's your performance overview.</p>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-sm font-medium text-primary-700">Last 30 Days</span>
+                <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+              <button class="btn-primary text-sm py-2.5 px-4">
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  Create Link
+                </span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="p-8">
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card animate-fadeInUp">
+              <div class="flex items-center justify-between mb-4">
+                <p class="text-sm font-medium text-primary-500">Total Clicks</p>
+                <div class="w-10 h-10 bg-accent-500/10 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-primary-900 mb-1">847,293</p>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-green-600 font-medium flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                  +12.5%
+                </span>
+                <span class="text-xs text-primary-400">vs last period</span>
+              </div>
+            </div>
+
+            <div class="stat-card animate-fadeInUp delay-100">
+              <div class="flex items-center justify-between mb-4">
+                <p class="text-sm font-medium text-primary-500">Conversions</p>
+                <div class="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-primary-900 mb-1">24,847</p>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-green-600 font-medium flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                  +8.3%
+                </span>
+                <span class="text-xs text-primary-400">vs last period</span>
+              </div>
+            </div>
+
+            <div class="stat-card animate-fadeInUp delay-200">
+              <div class="flex items-center justify-between mb-4">
+                <p class="text-sm font-medium text-primary-500">Revenue</p>
+                <div class="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-primary-900 mb-1">$142,847</p>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-green-600 font-medium flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                  +15.7%
+                </span>
+                <span class="text-xs text-primary-400">vs last period</span>
+              </div>
+            </div>
+
+            <div class="stat-card animate-fadeInUp delay-300">
+              <div class="flex items-center justify-between mb-4">
+                <p class="text-sm font-medium text-primary-500">Conversion Rate</p>
+                <div class="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-primary-900 mb-1">2.93%</p>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-red-600 font-medium flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                  </svg>
+                  -0.4%
+                </span>
+                <span class="text-xs text-primary-400">vs last period</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="grid lg:grid-cols-3 gap-6 mb-8">
+            <!-- Main Chart -->
+            <div class="lg:col-span-2 graph-container animate-fadeInUp">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <h3 class="text-lg font-semibold text-primary-900">Performance Overview</h3>
+                  <p class="text-sm text-primary-500">Daily clicks and conversions</p>
+                </div>
+                <div class="flex items-center gap-4 text-sm">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-accent-500 rounded-full"></div>
+                    <span class="text-primary-600">Clicks</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-primary-600">Conversions</span>
+                  </div>
+                </div>
+              </div>
+              <div class="h-72">
+                <canvas id="performanceChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="graph-container animate-fadeInUp delay-100">
+              <div class="mb-6">
+                <h3 class="text-lg font-semibold text-primary-900">Traffic Sources</h3>
+                <p class="text-sm text-primary-500">By channel breakdown</p>
+              </div>
+              <div class="h-52">
+                <canvas id="sourceChart"></canvas>
+              </div>
+              <div class="mt-4 space-y-2">
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-accent-500 rounded-full"></div>
+                    <span class="text-primary-600">Social Media</span>
+                  </div>
+                  <span class="font-medium text-primary-900">42%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-primary-600">Search</span>
+                  </div>
+                  <span class="font-medium text-primary-900">28%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                    <span class="text-primary-600">Direct</span>
+                  </div>
+                  <span class="font-medium text-primary-900">18%</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 bg-amber-500 rounded-full"></div>
+                    <span class="text-primary-600">Email</span>
+                  </div>
+                  <span class="font-medium text-primary-900">12%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table and Top Offers -->
+          <div class="grid lg:grid-cols-3 gap-6">
+            <!-- Recent Conversions Table -->
+            <div class="lg:col-span-2 card animate-fadeInUp">
+              <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-primary-900">Recent Conversions</h3>
+                    <p class="text-sm text-primary-500">Your latest conversion activity</p>
+                  </div>
+                  <button class="text-sm font-medium text-accent-500 hover:text-accent-600">View All</button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Click ID</th>
+                      <th>Offer</th>
+                      <th>Payout</th>
+                      <th>Status</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="font-mono text-sm">clk_8x7f2a9b...</td>
+                      <td>
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600 font-semibold text-sm">N</div>
+                          <span class="font-medium">NutraBoost Pro</span>
+                        </div>
+                      </td>
+                      <td class="font-semibold text-green-600">$45.00</td>
+                      <td><span class="badge badge-success">Approved</span></td>
+                      <td class="text-primary-500">2 min ago</td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono text-sm">clk_3k9m1b4c...</td>
+                      <td>
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-semibold text-sm">C</div>
+                          <span class="font-medium">CryptoTrade Elite</span>
+                        </div>
+                      </td>
+                      <td class="font-semibold text-green-600">$120.00</td>
+                      <td><span class="badge badge-warning">Pending</span></td>
+                      <td class="text-primary-500">15 min ago</td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono text-sm">clk_7n2p5c8d...</td>
+                      <td>
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center text-pink-600 font-semibold text-sm">D</div>
+                          <span class="font-medium">DateMatch Premium</span>
+                        </div>
+                      </td>
+                      <td class="font-semibold text-green-600">$35.00</td>
+                      <td><span class="badge badge-success">Approved</span></td>
+                      <td class="text-primary-500">32 min ago</td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono text-sm">clk_1x4y7z2e...</td>
+                      <td>
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 font-semibold text-sm">G</div>
+                          <span class="font-medium">GoldenSlots Casino</span>
+                        </div>
+                      </td>
+                      <td class="font-semibold text-green-600">$80.00</td>
+                      <td><span class="badge badge-success">Approved</span></td>
+                      <td class="text-primary-500">1 hr ago</td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono text-sm">clk_9w3v6u1f...</td>
+                      <td>
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 font-semibold text-sm">Q</div>
+                          <span class="font-medium">QuickLoans Direct</span>
+                        </div>
+                      </td>
+                      <td class="font-semibold text-green-600">$28.00</td>
+                      <td><span class="badge badge-success">Approved</span></td>
+                      <td class="text-primary-500">2 hr ago</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Top Performing Offers -->
+            <div class="card animate-fadeInUp delay-100">
+              <div class="p-6 border-b border-gray-100">
+                <h3 class="text-lg font-semibold text-primary-900">Top Offers</h3>
+                <p class="text-sm text-primary-500">Best performing this month</p>
+              </div>
+              <div class="p-4 space-y-3">
+                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center text-white font-bold">N</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-medium text-primary-900 truncate">NutraBoost Pro</p>
+                    <p class="text-sm text-primary-500">Nutra · $45 CPA</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-semibold text-primary-900">$12,450</p>
+                    <p class="text-xs text-green-600">+24%</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold">C</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-medium text-primary-900 truncate">CryptoTrade Elite</p>
+                    <p class="text-sm text-primary-500">Crypto · $120 CPA</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-semibold text-primary-900">$9,840</p>
+                    <p class="text-xs text-green-600">+18%</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold">D</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-medium text-primary-900 truncate">DateMatch Premium</p>
+                    <p class="text-sm text-primary-500">Dating · $35 CPA</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-semibold text-primary-900">$7,245</p>
+                    <p class="text-xs text-green-600">+12%</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">G</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-medium text-primary-900 truncate">GoldenSlots Casino</p>
+                    <p class="text-sm text-primary-500">Gaming · $80 CPA</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-semibold text-primary-900">$6,320</p>
+                    <p class="text-xs text-amber-600">+5%</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Character Helper -->
+              <div class="p-4 mx-4 mb-4 bg-primary-50 rounded-xl">
+                <div class="flex items-start gap-3">
+                  <div class="character" style="transform: scale(0.5); margin: -15px;">
+                    <div class="character-body">
+                      <div class="character-face">
+                        <div style="display: flex; justify-content: center;">
+                          <div class="character-eye"></div>
+                          <div class="character-eye"></div>
+                        </div>
+                        <div class="character-mouth"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-primary-900">Pro Tip!</p>
+                    <p class="text-xs text-primary-600">Focus on your top 3 offers to maximize ROI this month.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Page Navigation
+    function showDashboard() {
+      document.getElementById('homePage').classList.remove('active');
+      document.getElementById('dashboardPage').classList.add('active');
+      initCharts();
+    }
+
+    function showHome() {
+      document.getElementById('dashboardPage').classList.remove('active');
+      document.getElementById('homePage').classList.add('active');
+    }
+
+    // Initialize Charts
+    function initCharts() {
+      // Performance Chart
+      const perfCtx = document.getElementById('performanceChart');
+      if (perfCtx && !perfCtx.chart) {
+        perfCtx.chart = new Chart(perfCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan 1', 'Jan 5', 'Jan 10', 'Jan 15', 'Jan 20', 'Jan 25', 'Jan 30'],
+            datasets: [
+              {
+                label: 'Clicks',
+                data: [25000, 28000, 32000, 29000, 35000, 42000, 38000],
+                borderColor: '#2684ff',
+                backgroundColor: 'rgba(38, 132, 255, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6
+              },
+              {
+                label: 'Conversions',
+                data: [800, 950, 1100, 980, 1250, 1400, 1300],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: '#627d98', font: { size: 11 } }
+              },
+              y: {
+                grid: { color: '#f0f4f8' },
+                ticks: { color: '#627d98', font: { size: 11 } }
+              }
+            },
+            interaction: {
+              intersect: false,
+              mode: 'index'
+            }
+          }
+        });
+      }
+
+      // Source Chart
+      const srcCtx = document.getElementById('sourceChart');
+      if (srcCtx && !srcCtx.chart) {
+        srcCtx.chart = new Chart(srcCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Social Media', 'Search', 'Direct', 'Email'],
+            datasets: [{
+              data: [42, 28, 18, 12],
+              backgroundColor: ['#2684ff', '#10b981', '#8b5cf6', '#f59e0b'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            cutout: '70%'
+          }
+        });
+      }
+    }
+
+    // Nav item click handler
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Offers from './pages/Offers';
 import OfferDetail from './pages/OfferDetail';
 import TrackingLinks from './pages/TrackingLinks';
+import Tracking from './pages/Tracking';
 import Conversions from './pages/Conversions';
 import Reports from './pages/Reports';
 import Postbacks from './pages/Postbacks';
@@ -64,6 +65,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="offers" element={<Offers />} />
         <Route path="offers/:id" element={<OfferDetail />} />
+        <Route path="tracking" element={<Tracking />} />
         <Route path="links" element={<TrackingLinks />} />
         <Route path="conversions" element={<Conversions />} />
         <Route path="reports" element={<Reports />} />
