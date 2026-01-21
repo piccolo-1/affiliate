@@ -1,7 +1,8 @@
 import { Router, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import db from '../database/schema';
+import db from '../database/connection';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth';
+import { validate, createOfferSchema, updateOfferSchema } from '../middleware/validation';
 
 const router = Router();
 
@@ -178,7 +179,7 @@ router.get('/meta/categories', authenticate, async (req: AuthRequest, res: Respo
 });
 
 // Create new offer (admin/advertiser only)
-router.post('/', authenticate, requireRole('admin', 'advertiser'), async (req: AuthRequest, res: Response) => {
+router.post('/', authenticate, requireRole('admin', 'advertiser'), validate(createOfferSchema), async (req: AuthRequest, res: Response) => {
   try {
     const {
       name, description, url, previewUrl, category,
@@ -187,10 +188,6 @@ router.post('/', authenticate, requireRole('admin', 'advertiser'), async (req: A
       conversionCap, dailyCap, monthlyCap,
       requiresApproval, trackingDomain
     } = req.body;
-
-    if (!name || !url || !payoutAmount) {
-      return res.status(400).json({ error: 'Name, URL, and payout amount are required' });
-    }
 
     const id = uuidv4();
     const advertiserId = req.user!.role === 'advertiser' ? req.user!.id : null;

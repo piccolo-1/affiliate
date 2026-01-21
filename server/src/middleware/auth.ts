@@ -1,8 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import db from '../database/schema';
+import db from '../database/connection';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production';
+// Require JWT_SECRET in production
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
+  console.warn('WARNING: JWT_SECRET not set, using insecure default for development only');
+}
+
+const SECRET = JWT_SECRET || 'dev-only-insecure-secret-do-not-use-in-production';
 
 export interface AuthUser {
   id: string;
@@ -17,12 +27,12 @@ export interface AuthRequest extends Request {
 }
 
 export function generateToken(user: AuthUser): string {
-  return jwt.sign(user, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign(user, SECRET, { expiresIn: '7d' });
 }
 
 export function verifyToken(token: string): AuthUser | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as AuthUser;
+    return jwt.verify(token, SECRET) as AuthUser;
   } catch {
     return null;
   }

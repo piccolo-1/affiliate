@@ -1,8 +1,18 @@
 import { Router, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
-import db from '../database/schema';
+import db from '../database/connection';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth';
+import {
+  validate,
+  updateUserStatusSchema,
+  createManagerSchema,
+  createUserSchema,
+  updateApplicationSchema,
+  updateConversionSchema,
+  createPayoutSchema,
+  updatePayoutSchema
+} from '../middleware/validation';
 
 const router = Router();
 
@@ -190,14 +200,10 @@ router.get('/users', async (req: AuthRequest, res: Response) => {
 });
 
 // Update user status
-router.put('/users/:id/status', async (req: AuthRequest, res: Response) => {
+router.put('/users/:id/status', validate(updateUserStatusSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-
-    if (!['pending', 'active', 'suspended'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
-    }
 
     db.prepare('UPDATE users SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
       .run(status, id);
@@ -258,13 +264,9 @@ router.get('/managers', async (req: AuthRequest, res: Response) => {
 });
 
 // Create manager
-router.post('/managers', async (req: AuthRequest, res: Response) => {
+router.post('/managers', validate(createManagerSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { email, password, firstName, lastName, company, phone, skype, telegram } = req.body;
-
-    if (!email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: 'Email, password, first name, and last name are required' });
-    }
 
     const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
     if (existing) {
@@ -306,13 +308,9 @@ router.delete('/managers/:id', async (req: AuthRequest, res: Response) => {
 });
 
 // Create admin user
-router.post('/users', async (req: AuthRequest, res: Response) => {
+router.post('/users', validate(createUserSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { email, password, firstName, lastName, role } = req.body;
-
-    if (!email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
 
     const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
     if (existing) {
@@ -393,14 +391,10 @@ router.get('/applications', async (req: AuthRequest, res: Response) => {
 });
 
 // Approve/reject affiliate-offer application
-router.put('/applications/:id', async (req: AuthRequest, res: Response) => {
+router.put('/applications/:id', validate(updateApplicationSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { status, customPayout } = req.body;
-
-    if (!['approved', 'rejected'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
-    }
 
     db.prepare(`
       UPDATE affiliate_offers SET
@@ -471,14 +465,10 @@ router.get('/conversions', async (req: AuthRequest, res: Response) => {
 });
 
 // Update conversion status
-router.put('/conversions/:id', async (req: AuthRequest, res: Response) => {
+router.put('/conversions/:id', validate(updateConversionSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { status, rejectionReason, notes } = req.body;
-
-    if (!['pending', 'approved', 'rejected', 'reversed'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
-    }
 
     db.prepare(`
       UPDATE conversions SET
@@ -525,13 +515,9 @@ router.get('/payouts', async (req: AuthRequest, res: Response) => {
 });
 
 // Create payout
-router.post('/payouts', async (req: AuthRequest, res: Response) => {
+router.post('/payouts', validate(createPayoutSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { affiliateId, amount, paymentMethod, notes } = req.body;
-
-    if (!affiliateId || !amount) {
-      return res.status(400).json({ error: 'Affiliate ID and amount required' });
-    }
 
     const id = uuidv4();
     const today = new Date().toISOString().split('T')[0];

@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  # Main application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: affiliate-network
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - JWT_SECRET=${JWT_SECRET}
+      - CSRF_SECRET=${CSRF_SECRET}
+      - CLIENT_URL=${CLIENT_URL:-https://your-domain.com}
+      - BASE_URL=${BASE_URL:-https://your-domain.com}
+      - DATABASE_TYPE=${DATABASE_TYPE:-sqlite}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      # PostgreSQL settings (when DATABASE_TYPE=postgres)
+      - DATABASE_URL=${DATABASE_URL:-}
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_USER=${POSTGRES_USER:-affiliate}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}
+      - POSTGRES_DB=${POSTGRES_DB:-affiliate}
+    volumes:
+      - app-data:/app/data
+      - app-backups:/app/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - affiliate-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # PostgreSQL database (optional - comment out if using SQLite)
+  postgres:
+    image: postgres:15-alpine
+    container_name: affiliate-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-affiliate}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+      - POSTGRES_DB=${POSTGRES_DB:-affiliate}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - affiliate-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-affiliate} -d ${POSTGRES_DB:-affiliate}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Nginx reverse proxy with SSL
+  nginx:
+    image: nginx:alpine
+    container_name: affiliate-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - app
+    networks:
+      - affiliate-network
+
+  # Certbot for SSL certificates (Let's Encrypt)
+  certbot:
+    image: certbot/certbot
+    container_name: affiliate-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  # Database backup service
+  backup:
+    image: alpine:latest
+    container_name: affiliate-backup
+    volumes:
+      - app-data:/data:ro
+      - app-backups:/backups
+      - postgres-data:/postgres-data:ro
+    environment:
+      - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-30}
+    entrypoint: |
+      /bin/sh -c '
+        apk add --no-cache sqlite postgresql-client
+        while true; do
+          echo "Starting backup at $$(date)"
+          # Backup SQLite
+          if [ -f /data/affiliate.db ]; then
+            sqlite3 /data/affiliate.db ".backup /backups/sqlite_$$(date +%Y%m%d_%H%M%S).db"
+          fi
+          # Cleanup old backups
+          find /backups -name "*.db" -mtime +$${BACKUP_RETENTION_DAYS} -delete
+          find /backups -name "*.sql" -mtime +$${BACKUP_RETENTION_DAYS} -delete
+          echo "Backup completed at $$(date)"
+          sleep 86400
+        done
+      '
+    networks:
+      - affiliate-network
+
+volumes:
+  app-data:
+    driver: local
+  app-backups:
+    driver: local
+  postgres-data:
+    driver: local
+
+networks:
+  affiliate-network:
+    driver: bridge

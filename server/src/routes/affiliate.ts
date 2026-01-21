@@ -1,7 +1,8 @@
 import { Router, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import db from '../database/schema';
+import db from '../database/connection';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth';
+import { validate, createTrackingLinkSchema, createPostbackSchema } from '../middleware/validation';
 
 const router = Router();
 
@@ -171,13 +172,9 @@ router.get('/links', authenticate, async (req: AuthRequest, res: Response) => {
 });
 
 // Create new tracking link
-router.post('/links', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/links', authenticate, validate(createTrackingLinkSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { offerId, name, defaultSub1, defaultSub2, defaultSub3, defaultSub4, defaultSub5 } = req.body;
-
-    if (!offerId) {
-      return res.status(400).json({ error: 'Offer ID is required' });
-    }
 
     // Check if affiliate is approved for this offer
     const assignment = db.prepare(`
@@ -310,13 +307,9 @@ router.get('/postbacks', authenticate, async (req: AuthRequest, res: Response) =
 });
 
 // Create postback URL
-router.post('/postbacks', authenticate, async (req: AuthRequest, res: Response) => {
+router.post('/postbacks', authenticate, validate(createPostbackSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { offerId, url, eventType = 'conversion', method = 'GET' } = req.body;
-
-    if (!url) {
-      return res.status(400).json({ error: 'URL is required' });
-    }
 
     const id = uuidv4();
     db.prepare(`

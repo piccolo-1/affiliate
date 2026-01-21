@@ -1,8 +1,16 @@
 import { Router, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import db from '../database/schema';
+import db from '../database/connection';
 import { generateToken, authenticate, AuthRequest, AuthUser } from '../middleware/auth';
+import { authRateLimiter } from '../middleware/rateLimiter';
+import {
+  validate,
+  loginSchema,
+  registerSchema,
+  updateProfileSchema,
+  changePasswordSchema
+} from '../middleware/validation';
 
 const router = Router();
 
@@ -17,13 +25,9 @@ function generateReferralCode(): string {
 }
 
 // Register new affiliate
-router.post('/register', async (req, res) => {
+router.post('/register', authRateLimiter, validate(registerSchema), async (req, res) => {
   try {
     const { email, password, firstName, lastName, company, referralCode } = req.body;
-
-    if (!email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
 
     // Check if email already exists
     const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
@@ -88,13 +92,9 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', authRateLimiter, validate(loginSchema), async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password required' });
-    }
 
     // Find user
     const user = db.prepare(`
@@ -192,7 +192,7 @@ router.get('/me', authenticate, (req: AuthRequest, res: Response) => {
 });
 
 // Update profile
-router.put('/profile', authenticate, async (req: AuthRequest, res: Response) => {
+router.put('/profile', authenticate, validate(updateProfileSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { firstName, lastName, company, payoutMethod, payoutDetails, minimumPayout } = req.body;
 
@@ -216,13 +216,9 @@ router.put('/profile', authenticate, async (req: AuthRequest, res: Response) => 
 });
 
 // Change password
-router.put('/password', authenticate, async (req: AuthRequest, res: Response) => {
+router.put('/password', authenticate, validate(changePasswordSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ error: 'Current and new password required' });
-    }
 
     const user = db.prepare('SELECT password FROM users WHERE id = ?').get(req.user!.id) as any;
 

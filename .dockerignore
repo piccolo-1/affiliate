@@ -1,0 +1,51 @@
+# Dependencies
+node_modules
+*/node_modules
+
+# Build outputs
+dist
+*/dist
+*.js.map
+
+# Development files
+.env
+.env.local
+*.log
+npm-debug.log*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker
+
+# Data (will be mounted as volumes)
+server/data
+backups
+
+# Tests
+coverage
+*.test.ts
+*.spec.ts
+
+# Documentation
+*.md
+!README.md
+
+# Misc
+.editorconfig
+.prettierrc
+.eslintrc*

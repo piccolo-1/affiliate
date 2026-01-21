@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import UAParser from 'ua-parser-js';
-import db from '../database/schema';
+import db from '../database/connection';
+import { trackingRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
@@ -60,7 +61,7 @@ function getReferrerDomain(referrer: string | undefined): string | null {
 
 // Main tracking endpoint - redirect with click tracking
 // URL format: /c/{short_code}?sub1=xxx&sub2=xxx&sub3=xxx&sub4=xxx&sub5=xxx
-router.get('/:shortCode', async (req: Request, res: Response) => {
+router.get('/:shortCode', trackingRateLimiter, async (req: Request, res: Response) => {
   try {
     const { shortCode } = req.params;
     const { sub1, sub2, sub3, sub4, sub5, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = req.query;

@@ -1,11 +1,45 @@
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import db, { initializeDatabase } from './database/schema';
+import db from './database/connection';
+import { initializeDatabase } from './database/schema';
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 async function seed() {
   console.log('Seeding database...');
 
   initializeDatabase();
+
+  // In production, only create admin if ADMIN_EMAIL and ADMIN_PASSWORD are set
+  if (isProduction) {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+      console.log('⚠️  Production mode: Set ADMIN_EMAIL and ADMIN_PASSWORD environment variables to create admin user');
+      console.log('Skipping demo data seeding in production mode.');
+      return;
+    }
+
+    const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(adminEmail);
+    if (!existingAdmin) {
+      const adminId = uuidv4();
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      db.prepare(`
+        INSERT INTO users (id, email, password, first_name, last_name, role, status, referral_code)
+        VALUES (?, ?, ?, ?, ?, 'admin', 'active', ?)
+      `).run(adminId, adminEmail, hashedPassword, 'Admin', 'User', 'ADMIN' + Math.random().toString(36).substring(2, 6).toUpperCase());
+      console.log(`✅ Created admin user: ${adminEmail}`);
+    } else {
+      console.log('Admin user already exists');
+    }
+
+    console.log('\n✅ Production seeding complete!');
+    return;
+  }
+
+  // Development mode - create demo accounts
+  console.log('🔧 Development mode - creating demo accounts...');
 
   // Create admin user
   const adminId = uuidv4();
@@ -263,11 +297,12 @@ async function seed() {
     }
   }
 
-  console.log('\n✅ Seeding complete!');
-  console.log('\n📋 Demo accounts:');
+  console.log('\n✅ Development seeding complete!');
+  console.log('\n📋 Demo accounts (DEVELOPMENT ONLY):');
   console.log('  Admin: admin@example.com / admin123');
   console.log('  Manager: manager@example.com / manager123');
   console.log('  Affiliate: demo@example.com / demo123');
+  console.log('\n⚠️  WARNING: These credentials should NEVER be used in production!');
 }
 
 seed().catch(console.error);
