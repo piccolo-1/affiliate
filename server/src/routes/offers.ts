@@ -41,7 +41,7 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
     const offers = db.prepare(query).all(...params) as any[];
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) as total FROM offers WHERE status = "active"';
+    let countQuery = "SELECT COUNT(*) as total FROM offers WHERE status = 'active'";
     const countParams: any[] = [];
     if (category) {
       countQuery += ' AND category = ?';

@@ -1,7 +1,7 @@
 {
   "name": "affiliate-network",
   "version": "1.0.0",
-  "description": "Affiliate Marketing Network with Everflow-style Tracking",
+  "description": "Affiliate Marketing Network - Toss + Everflow + Offervault Style",
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
@@ -11,6 +11,8 @@
     "build:server": "cd server && npm run build",
     "build:client": "cd client && npm run build",
     "start": "cd server && npm start",
+    "seed": "cd server && npm run seed",
+    "setup": "npm run install:all && npm run seed",
     "install:all": "npm install && cd server && npm install && cd ../client && npm install"
   },
   "devDependencies": {
