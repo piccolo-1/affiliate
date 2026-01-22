@@ -12,6 +12,14 @@ import conversionRoutes from './routes/conversions';
 import statsRoutes from './routes/stats';
 import adminRoutes from './routes/admin';
 import postbackRoutes from './routes/postback';
+import { startRetryWorker } from './services/postbackRetry';
+import {
+  authRateLimiter,
+  apiRateLimiter,
+  trackingRateLimiter,
+  postbackRateLimiter,
+  adminRateLimiter
+} from './middleware/rateLimit';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -36,20 +44,20 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/affiliate', affiliateRoutes);
-app.use('/api/offers', offerRoutes);
-app.use('/api/conversions', conversionRoutes);
-app.use('/api/stats', statsRoutes);
-app.use('/api/admin', adminRoutes);
+// API Routes with rate limiting
+app.use('/api/auth', authRateLimiter, authRoutes);
+app.use('/api/affiliate', apiRateLimiter, affiliateRoutes);
+app.use('/api/offers', apiRateLimiter, offerRoutes);
+app.use('/api/conversions', apiRateLimiter, conversionRoutes);
+app.use('/api/stats', apiRateLimiter, statsRoutes);
+app.use('/api/admin', adminRateLimiter, adminRoutes);
 
-// Tracking Routes (public)
-app.use('/track', trackingRoutes);
-app.use('/postback', postbackRoutes);
+// Tracking Routes (public) with appropriate rate limits
+app.use('/track', trackingRateLimiter, trackingRoutes);
+app.use('/postback', postbackRateLimiter, postbackRoutes);
 
-// Serve click redirect (short tracking links)
-app.use('/c', trackingRoutes);
+// Serve click redirect (short tracking links) with high-throughput rate limit
+app.use('/c', trackingRateLimiter, trackingRoutes);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
@@ -69,6 +77,9 @@ app.listen(PORT, () => {
   console.log(`🚀 Affiliate Network Server running on port ${PORT}`);
   console.log(`📊 Tracking endpoint: http://localhost:${PORT}/track`);
   console.log(`🔗 Click redirect: http://localhost:${PORT}/c/{short_code}`);
+
+  // Start the postback retry worker
+  startRetryWorker();
 });
 
 export default app;

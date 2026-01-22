@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import UAParser from 'ua-parser-js';
 import db from '../database/schema';
+import { calculateFraudScore } from '../services/fraudDetection';
 
 const router = Router();
 
@@ -95,6 +96,20 @@ router.get('/:shortCode', async (req: Request, res: Response) => {
     const clickId = generateClickId();
     const id = uuidv4();
 
+    // Calculate fraud score
+    const fraudResult = calculateFraudScore(
+      ipAddress,
+      userAgent,
+      trackingLink.affiliate_id,
+      trackingLink.offer_id,
+      referrer as string || null,
+      {
+        deviceType: deviceInfo.deviceType,
+        browserName: deviceInfo.browserName,
+        osName: deviceInfo.osName
+      }
+    );
+
     // Check for duplicate clicks (same IP + offer within 24 hours)
     const existingClick = db.prepare(`
       SELECT id FROM clicks
@@ -103,7 +118,7 @@ router.get('/:shortCode', async (req: Request, res: Response) => {
     `).get(trackingLink.affiliate_id, trackingLink.offer_id, ipAddress);
     const isUnique = !existingClick;
 
-    // Store click
+    // Store click with fraud score
     db.prepare(`
       INSERT INTO clicks (
         id, click_id, tracking_link_id, affiliate_id, offer_id,
@@ -112,8 +127,8 @@ router.get('/:shortCode', async (req: Request, res: Response) => {
         os_name, os_version, browser_name, browser_version,
         referrer, referrer_domain,
         utm_source, utm_medium, utm_campaign, utm_content, utm_term,
-        is_unique, is_bot
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        is_unique, is_bot, fraud_score
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       id, clickId, trackingLink.id, trackingLink.affiliate_id, trackingLink.offer_id,
       sub1 || trackingLink.default_sub1 || null,
@@ -129,8 +144,14 @@ router.get('/:shortCode', async (req: Request, res: Response) => {
       utm_source as string || null, utm_medium as string || null,
       utm_campaign as string || null, utm_content as string || null,
       utm_term as string || null,
-      isUnique ? 1 : 0, isBot ? 1 : 0
+      isUnique ? 1 : 0, isBot || fraudResult.signals.isBot ? 1 : 0,
+      fraudResult.score
     );
+
+    // Log high-risk clicks for monitoring
+    if (fraudResult.riskLevel === 'critical') {
+      console.log(`[FraudAlert] Critical fraud score ${fraudResult.score} for click ${clickId}: ${fraudResult.reason}`);
+    }
 
     // Update daily stats
     updateDailyStats(trackingLink.affiliate_id, trackingLink.offer_id, isUnique);

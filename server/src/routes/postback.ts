@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../database/schema';
+import { queuePostbackRetry } from '../services/postbackRetry';
 
 const router = Router();
 
@@ -276,15 +277,57 @@ async function fireAffiliatePostbacks(click: any, conversionId: string, event: s
 
         // Log postback
         db.prepare(`
-          INSERT INTO postback_logs (id, postback_url_id, conversion_id, request_url, response_code, success)
-          VALUES (?, ?, ?, ?, ?, ?)
+          INSERT INTO postback_logs (id, postback_url_id, conversion_id, request_url, response_code, success, retry_count)
+          VALUES (?, ?, ?, ?, ?, ?, 0)
         `).run(uuidv4(), postback.id, conversionId, url, response.status, response.ok ? 1 : 0);
+
+        // If failed (non-2xx response), queue for retry
+        if (!response.ok) {
+          queuePostbackRetry(
+            postback.id,
+            conversionId,
+            {
+              click_id: click.click_id,
+              affiliate_id: click.affiliate_id,
+              offer_id: click.offer_id,
+              sub1: click.sub1,
+              sub2: click.sub2,
+              sub3: click.sub3,
+              sub4: click.sub4,
+              sub5: click.sub5
+            },
+            event,
+            payout,
+            revenue,
+            `HTTP ${response.status}`
+          );
+        }
       } catch (err: any) {
         // Log failed postback
         db.prepare(`
-          INSERT INTO postback_logs (id, postback_url_id, conversion_id, request_url, success, error_message)
-          VALUES (?, ?, ?, ?, 0, ?)
+          INSERT INTO postback_logs (id, postback_url_id, conversion_id, request_url, success, error_message, retry_count)
+          VALUES (?, ?, ?, ?, 0, ?, 0)
         `).run(uuidv4(), postback.id, conversionId, url, err.message);
+
+        // Queue for retry
+        queuePostbackRetry(
+          postback.id,
+          conversionId,
+          {
+            click_id: click.click_id,
+            affiliate_id: click.affiliate_id,
+            offer_id: click.offer_id,
+            sub1: click.sub1,
+            sub2: click.sub2,
+            sub3: click.sub3,
+            sub4: click.sub4,
+            sub5: click.sub5
+          },
+          event,
+          payout,
+          revenue,
+          err.message
+        );
       }
     }
   } catch (error) {
