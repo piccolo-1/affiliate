@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -57,22 +58,25 @@ function App() {
 
   return (
     <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
 
-      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route index element={<Navigate to="/dashboard" />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="offers" element={<Offers />} />
-        <Route path="offers/:id" element={<OfferDetail />} />
-        <Route path="tracking" element={<Tracking />} />
-        <Route path="links" element={<TrackingLinks />} />
-        <Route path="conversions" element={<Conversions />} />
-        <Route path="reports" element={<Reports />} />
-        <Route path="postbacks" element={<Postbacks />} />
-        <Route path="settings" element={<Settings />} />
+      {/* Protected Affiliate Routes - Layout wrapper for Outlet */}
+      <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/offers/:id" element={<OfferDetail />} />
+        <Route path="/tracking" element={<Tracking />} />
+        <Route path="/links" element={<TrackingLinks />} />
+        <Route path="/conversions" element={<Conversions />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/postbacks" element={<Postbacks />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
+      {/* Protected Admin Routes */}
       <Route path="/admin" element={<ProtectedRoute adminOnly><Layout /></ProtectedRoute>}>
         <Route index element={<AdminDashboard />} />
         <Route path="offers" element={<AdminOffers />} />
@@ -82,7 +86,7 @@ function App() {
         <Route path="payouts" element={<AdminPayouts />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/dashboard" />} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }

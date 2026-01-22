@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import db from '../database/schema';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth';
+import { getRetryQueueStats, processRetryQueue, cleanupOldEntries } from '../services/postbackRetry';
+import { getRateLimitStats } from '../middleware/rateLimit';
+import { getNetworkFraudOverview, getAffiliateFraudStats } from '../services/fraudDetection';
 
 const router = Router();
 
@@ -603,6 +606,309 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error('Get stats error:', error);
     res.status(500).json({ error: 'Failed to get stats' });
+  }
+});
+
+// ========================================
+// Postback Retry Queue Management
+// ========================================
+
+// Get retry queue statistics
+router.get('/postback-queue/stats', async (req: AuthRequest, res: Response) => {
+  try {
+    const stats = getRetryQueueStats();
+    res.json(stats);
+  } catch (error) {
+    console.error('Get retry queue stats error:', error);
+    res.status(500).json({ error: 'Failed to get retry queue stats' });
+  }
+});
+
+// Get retry queue items
+router.get('/postback-queue', async (req: AuthRequest, res: Response) => {
+  try {
+    const { status, page = 1, limit = 50 } = req.query;
+    const offset = (Number(page) - 1) * Number(limit);
+
+    let query = `
+      SELECT prq.*, u.email as affiliate_email, o.name as offer_name, pb.url as postback_url
+      FROM postback_retry_queue prq
+      JOIN users u ON prq.affiliate_id = u.id
+      JOIN offers o ON prq.offer_id = o.id
+      JOIN postback_urls pb ON prq.postback_url_id = pb.id
+      WHERE 1=1
+    `;
+    const params: any[] = [];
+
+    if (status) {
+      query += ' AND prq.status = ?';
+      params.push(status);
+    }
+
+    query += ' ORDER BY prq.created_at DESC LIMIT ? OFFSET ?';
+    params.push(Number(limit), offset);
+
+    const items = db.prepare(query).all(...params) as any[];
+
+    res.json({
+      items: items.map(item => ({
+        id: item.id,
+        conversionId: item.conversion_id,
+        clickId: item.click_id,
+        affiliateEmail: item.affiliate_email,
+        offerName: item.offer_name,
+        postbackUrl: item.postback_url,
+        eventType: item.event_type,
+        payout: item.payout,
+        revenue: item.revenue,
+        retryCount: item.retry_count,
+        maxRetries: item.max_retries,
+        nextRetryAt: item.next_retry_at,
+        lastError: item.last_error,
+        status: item.status,
+        createdAt: item.created_at,
+        updatedAt: item.updated_at
+      }))
+    });
+  } catch (error) {
+    console.error('Get retry queue error:', error);
+    res.status(500).json({ error: 'Failed to get retry queue' });
+  }
+});
+
+// Manually trigger retry processing
+router.post('/postback-queue/process', async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await processRetryQueue();
+    res.json({
+      message: 'Retry queue processed',
+      ...result
+    });
+  } catch (error) {
+    console.error('Process retry queue error:', error);
+    res.status(500).json({ error: 'Failed to process retry queue' });
+  }
+});
+
+// Reset a failed item back to pending for retry
+router.post('/postback-queue/:id/retry', async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const item = db.prepare('SELECT * FROM postback_retry_queue WHERE id = ?').get(id) as any;
+    if (!item) {
+      return res.status(404).json({ error: 'Queue item not found' });
+    }
+
+    // Reset to pending with immediate retry
+    const nextRetryAt = new Date().toISOString();
+    db.prepare(`
+      UPDATE postback_retry_queue SET
+        status = 'pending',
+        retry_count = 0,
+        next_retry_at = ?,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).run(nextRetryAt, id);
+
+    res.json({ message: 'Item queued for immediate retry' });
+  } catch (error) {
+    console.error('Retry queue item error:', error);
+    res.status(500).json({ error: 'Failed to retry queue item' });
+  }
+});
+
+// Delete a queue item
+router.delete('/postback-queue/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    db.prepare('DELETE FROM postback_retry_queue WHERE id = ?').run(id);
+    res.json({ message: 'Queue item deleted' });
+  } catch (error) {
+    console.error('Delete queue item error:', error);
+    res.status(500).json({ error: 'Failed to delete queue item' });
+  }
+});
+
+// Cleanup old completed/failed entries
+router.post('/postback-queue/cleanup', async (req: AuthRequest, res: Response) => {
+  try {
+    const deletedCount = cleanupOldEntries();
+    res.json({
+      message: 'Cleanup completed',
+      deletedCount
+    });
+  } catch (error) {
+    console.error('Cleanup retry queue error:', error);
+    res.status(500).json({ error: 'Failed to cleanup retry queue' });
+  }
+});
+
+// Get postback logs with retry information
+router.get('/postback-logs', async (req: AuthRequest, res: Response) => {
+  try {
+    const { success, page = 1, limit = 100 } = req.query;
+    const offset = (Number(page) - 1) * Number(limit);
+
+    let query = `
+      SELECT pl.*, c.click_id, pb.url as postback_url, u.email as affiliate_email
+      FROM postback_logs pl
+      JOIN conversions c ON pl.conversion_id = c.id
+      JOIN postback_urls pb ON pl.postback_url_id = pb.id
+      JOIN users u ON pb.affiliate_id = u.id
+      WHERE 1=1
+    `;
+    const params: any[] = [];
+
+    if (success !== undefined) {
+      query += ' AND pl.success = ?';
+      params.push(success === 'true' ? 1 : 0);
+    }
+
+    query += ' ORDER BY pl.created_at DESC LIMIT ? OFFSET ?';
+    params.push(Number(limit), offset);
+
+    const logs = db.prepare(query).all(...params) as any[];
+
+    res.json({
+      logs: logs.map(log => ({
+        id: log.id,
+        conversionId: log.conversion_id,
+        clickId: log.click_id,
+        affiliateEmail: log.affiliate_email,
+        postbackUrl: log.postback_url,
+        requestUrl: log.request_url,
+        responseCode: log.response_code,
+        success: log.success === 1,
+        errorMessage: log.error_message,
+        retryCount: log.retry_count || 0,
+        createdAt: log.created_at
+      }))
+    });
+  } catch (error) {
+    console.error('Get postback logs error:', error);
+    res.status(500).json({ error: 'Failed to get postback logs' });
+  }
+});
+
+// ========================================
+// Rate Limiting Monitoring
+// ========================================
+
+// Get rate limit statistics
+router.get('/rate-limit/stats', async (req: AuthRequest, res: Response) => {
+  try {
+    const stats = getRateLimitStats();
+    res.json(stats);
+  } catch (error) {
+    console.error('Get rate limit stats error:', error);
+    res.status(500).json({ error: 'Failed to get rate limit stats' });
+  }
+});
+
+// ========================================
+// Fraud Detection & Monitoring
+// ========================================
+
+// Get network-wide fraud overview
+router.get('/fraud/overview', async (req: AuthRequest, res: Response) => {
+  try {
+    const { days = 7 } = req.query;
+    const overview = getNetworkFraudOverview(Number(days));
+    res.json(overview);
+  } catch (error) {
+    console.error('Get fraud overview error:', error);
+    res.status(500).json({ error: 'Failed to get fraud overview' });
+  }
+});
+
+// Get affiliate-specific fraud stats
+router.get('/fraud/affiliate/:affiliateId', async (req: AuthRequest, res: Response) => {
+  try {
+    const { affiliateId } = req.params;
+    const { days = 7 } = req.query;
+    const stats = getAffiliateFraudStats(affiliateId, Number(days));
+    res.json(stats);
+  } catch (error) {
+    console.error('Get affiliate fraud stats error:', error);
+    res.status(500).json({ error: 'Failed to get affiliate fraud stats' });
+  }
+});
+
+// Get high-risk clicks
+router.get('/fraud/clicks', async (req: AuthRequest, res: Response) => {
+  try {
+    const { minScore = 50, page = 1, limit = 100 } = req.query;
+    const offset = (Number(page) - 1) * Number(limit);
+
+    const clicks = db.prepare(`
+      SELECT c.*, u.email as affiliate_email, o.name as offer_name
+      FROM clicks c
+      JOIN users u ON c.affiliate_id = u.id
+      JOIN offers o ON c.offer_id = o.id
+      WHERE c.fraud_score >= ?
+      ORDER BY c.created_at DESC
+      LIMIT ? OFFSET ?
+    `).all(Number(minScore), Number(limit), offset) as any[];
+
+    res.json({
+      clicks: clicks.map(c => ({
+        id: c.id,
+        clickId: c.click_id,
+        affiliateEmail: c.affiliate_email,
+        offerName: c.offer_name,
+        fraudScore: c.fraud_score,
+        isBot: c.is_bot === 1,
+        ipAddress: c.ip_address,
+        userAgent: c.user_agent,
+        deviceType: c.device_type,
+        browserName: c.browser_name,
+        osName: c.os_name,
+        referrer: c.referrer,
+        country: c.country,
+        createdAt: c.created_at
+      }))
+    });
+  } catch (error) {
+    console.error('Get fraud clicks error:', error);
+    res.status(500).json({ error: 'Failed to get fraud clicks' });
+  }
+});
+
+// Get fraud statistics by date
+router.get('/fraud/stats', async (req: AuthRequest, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const end = endDate ? new Date(endDate as string) : new Date();
+    const start = startDate ? new Date(startDate as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const stats = db.prepare(`
+      SELECT
+        DATE(created_at) as date,
+        COUNT(*) as total_clicks,
+        SUM(CASE WHEN fraud_score > 50 THEN 1 ELSE 0 END) as flagged_clicks,
+        SUM(CASE WHEN fraud_score > 80 THEN 1 ELSE 0 END) as blocked_clicks,
+        SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) as bot_clicks,
+        AVG(fraud_score) as avg_fraud_score
+      FROM clicks
+      WHERE DATE(created_at) >= ? AND DATE(created_at) <= ?
+      GROUP BY DATE(created_at)
+      ORDER BY date ASC
+    `).all(start.toISOString().split('T')[0], end.toISOString().split('T')[0]) as any[];
+
+    res.json(stats.map(s => ({
+      date: s.date,
+      totalClicks: s.total_clicks,
+      flaggedClicks: s.flagged_clicks,
+      blockedClicks: s.blocked_clicks,
+      botClicks: s.bot_clicks,
+      avgFraudScore: Math.round((s.avg_fraud_score || 0) * 100) / 100,
+      fraudRate: s.total_clicks > 0 ? Math.round((s.flagged_clicks / s.total_clicks) * 10000) / 100 : 0
+    })));
+  } catch (error) {
+    console.error('Get fraud stats error:', error);
+    res.status(500).json({ error: 'Failed to get fraud stats' });
   }
 });
 

@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import Database, { Database as DatabaseType } from 'better-sqlite3';
 import path from 'path';
 
 const dbPath = path.join(__dirname, '../../data/affiliate.db');
@@ -10,7 +10,7 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-const db = new Database(dbPath);
+const db: DatabaseType = new Database(dbPath);
 
 // Enable foreign keys and WAL mode for better performance
 db.pragma('journal_mode = WAL');
@@ -257,7 +257,35 @@ export function initializeDatabase() {
       response_body TEXT,
       success INTEGER DEFAULT 0,
       error_message TEXT,
+      retry_count INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Postback retry queue - for failed postbacks that need retrying
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS postback_retry_queue (
+      id TEXT PRIMARY KEY,
+      postback_url_id TEXT NOT NULL REFERENCES postback_urls(id),
+      conversion_id TEXT NOT NULL REFERENCES conversions(id),
+      click_id TEXT NOT NULL,
+      affiliate_id TEXT NOT NULL,
+      offer_id TEXT NOT NULL,
+      event_type TEXT NOT NULL,
+      payout REAL NOT NULL,
+      revenue REAL NOT NULL,
+      sub1 TEXT,
+      sub2 TEXT,
+      sub3 TEXT,
+      sub4 TEXT,
+      sub5 TEXT,
+      retry_count INTEGER DEFAULT 0,
+      max_retries INTEGER DEFAULT 5,
+      next_retry_at DATETIME NOT NULL,
+      last_error TEXT,
+      status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 
@@ -293,6 +321,8 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_conversions_created_at ON conversions(created_at);
     CREATE INDEX IF NOT EXISTS idx_tracking_links_short_code ON tracking_links(short_code);
     CREATE INDEX IF NOT EXISTS idx_daily_stats_date ON daily_stats(date);
+    CREATE INDEX IF NOT EXISTS idx_postback_retry_queue_next_retry ON postback_retry_queue(next_retry_at, status);
+    CREATE INDEX IF NOT EXISTS idx_postback_retry_queue_status ON postback_retry_queue(status);
   `);
 
   console.log('Database initialized successfully');
