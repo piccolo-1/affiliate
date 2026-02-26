@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import api from '../lib/api';
 import { format, subDays, subHours } from 'date-fns';
 import {
-  LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Line
 } from 'recharts';
 import {
   MousePointer,
@@ -13,18 +13,12 @@ import {
   Target,
   Activity,
   Clock,
-  Globe,
   Smartphone,
-  Monitor,
   RefreshCw,
-  Calendar,
-  Filter,
-  ChevronDown,
   ArrowUpRight,
   ArrowDownRight,
   Zap,
-  Eye,
-  Users
+  Eye
 } from 'lucide-react';
 
 interface TrackingStats {
@@ -41,17 +35,6 @@ interface HourlyData {
   clicks: number;
   conversions: number;
   revenue: number;
-}
-
-interface RecentClick {
-  id: string;
-  clickId: string;
-  offerName: string;
-  country: string;
-  device: string;
-  browser: string;
-  sub1: string;
-  createdAt: string;
 }
 
 interface RecentConversion {
@@ -73,9 +56,7 @@ export default function Tracking() {
     epc: 0,
     conversionRate: 0
   });
-  const [previousStats, setPreviousStats] = useState<TrackingStats | null>(null);
   const [hourlyData, setHourlyData] = useState<HourlyData[]>([]);
-  const [recentClicks, setRecentClicks] = useState<RecentClick[]>([]);
   const [recentConversions, setRecentConversions] = useState<RecentConversion[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -149,9 +130,6 @@ export default function Tracking() {
 
       // Set recent conversions
       setRecentConversions(dashboard.recentConversions?.slice(0, 5) || []);
-
-      // Mock recent clicks
-      setRecentClicks([]);
 
       setLastUpdated(new Date());
     } catch (error) {
@@ -249,7 +227,7 @@ export default function Tracking() {
           <p className="metric-label mb-1">Total Clicks</p>
           <div className="flex items-end gap-2">
             <p className="metric">{stats.clicks.toLocaleString()}</p>
-            {getChangeIndicator(stats.clicks, previousStats?.clicks)}
+            {getChangeIndicator(stats.clicks, undefined)}
           </div>
           <p className="text-sm text-gray-500 mt-2">
             {stats.uniqueClicks.toLocaleString()} unique
@@ -264,7 +242,7 @@ export default function Tracking() {
           <p className="metric-label mb-1">Conversions</p>
           <div className="flex items-end gap-2">
             <p className="metric">{stats.conversions.toLocaleString()}</p>
-            {getChangeIndicator(stats.conversions, previousStats?.conversions)}
+            {getChangeIndicator(stats.conversions, undefined)}
           </div>
           <p className="text-sm text-gray-500 mt-2">
             {stats.conversionRate.toFixed(2)}% CR
@@ -279,7 +257,7 @@ export default function Tracking() {
           <p className="metric-label mb-1">Revenue</p>
           <div className="flex items-end gap-2">
             <p className="metric">${stats.revenue.toFixed(2)}</p>
-            {getChangeIndicator(stats.revenue, previousStats?.revenue)}
+            {getChangeIndicator(stats.revenue, undefined)}
           </div>
           <p className="text-sm text-gray-500 mt-2">
             Approved earnings
@@ -294,7 +272,7 @@ export default function Tracking() {
           <p className="metric-label mb-1">EPC</p>
           <div className="flex items-end gap-2">
             <p className="metric">${stats.epc.toFixed(2)}</p>
-            {getChangeIndicator(stats.epc, previousStats?.epc)}
+            {getChangeIndicator(stats.epc, undefined)}
           </div>
           <p className="text-sm text-gray-500 mt-2">
             Earnings per click

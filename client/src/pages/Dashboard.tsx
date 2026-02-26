@@ -5,9 +5,7 @@ import {
   TrendingUp,
   MousePointer,
   DollarSign,
-  Percent,
   ArrowUpRight,
-  ArrowDownRight,
   Target,
   Zap,
   ChevronRight,
@@ -17,10 +15,9 @@ import {
   Activity,
   BarChart3,
   Store,
-  Link2,
-  ExternalLink
+  Link2
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { format } from 'date-fns';
 
 interface DashboardData {
