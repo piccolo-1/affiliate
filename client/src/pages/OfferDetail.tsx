@@ -8,9 +8,7 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  ExternalLink,
-  Copy,
-  Check
+  ExternalLink
 } from 'lucide-react';
 
 interface Offer {

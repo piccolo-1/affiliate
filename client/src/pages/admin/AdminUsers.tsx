@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../lib/api';
 import { format } from 'date-fns';
-import { Search, Filter, UserCheck, UserX, Plus, X } from 'lucide-react';
+import { Search, UserCheck, UserX, Plus, X } from 'lucide-react';
 
 interface User {
   id: string;

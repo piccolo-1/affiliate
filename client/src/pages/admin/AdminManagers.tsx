@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Mail, Phone, MessageCircle, Users, Edit2, Trash2, X, Check } from 'lucide-react';
+import { Plus, Search, Phone, MessageCircle, Users, Trash2, X, Check } from 'lucide-react';
 import api from '../../lib/api';
 
 interface Manager {

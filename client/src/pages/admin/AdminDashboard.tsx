@@ -6,7 +6,6 @@ import {
   ShoppingBag,
   DollarSign,
   TrendingUp,
-  MousePointer,
   AlertCircle
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

@@ -22,7 +22,6 @@ import {
   UserCircle,
   Briefcase,
   CreditCard,
-  Activity,
   Target,
   Zap,
   TrendingUp,

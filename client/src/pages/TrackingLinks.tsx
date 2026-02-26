@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../lib/api';
-import { Plus, Copy, Check, ExternalLink, Trash2, Edit2, X } from 'lucide-react';
+import { Plus, Copy, Check, Trash2, X } from 'lucide-react';
 
 interface TrackingLink {
   id: string;

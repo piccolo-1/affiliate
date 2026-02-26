@@ -4,7 +4,7 @@ import api from '../lib/api';
 import {
   Search,
   Globe,
-  DollarSign,
+  Filter,
   CheckCircle,
   Clock,
   XCircle,
@@ -21,16 +21,9 @@ import {
   Layers,
   Sparkles,
   ArrowRight,
-  Filter,
-  SlidersHorizontal,
   Flame,
   Zap,
-  Target,
-  ExternalLink,
-  X,
-  ChevronDown,
-  Users,
-  BarChart3
+  Target
 } from 'lucide-react';
 
 interface Offer {
@@ -75,7 +68,6 @@ export default function Offers() {
   const [selectedVertical, setSelectedVertical] = useState('all');
   const [selectedPayoutType, setSelectedPayoutType] = useState('All');
   const [selectedCountry, setSelectedCountry] = useState('All');
-  const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<'newest' | 'payout' | 'popular'>('popular');
 
   useEffect(() => {
